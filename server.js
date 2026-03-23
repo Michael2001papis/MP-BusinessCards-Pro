@@ -1,3 +1,7 @@
+const path = require("path");
+// מיקום קבצי config לא תלוי בתיקיית העבודה (חשוב אחרי העברת הפרויקט משורש אחר / IDE)
+process.env.NODE_CONFIG_DIR = path.join(__dirname, "config");
+
 const express = require("express");
 const app = express();
 const router = require("./router/router");
@@ -16,7 +20,7 @@ app.use(cors);
 app.use(logger);
 app.use(express.json());
 app.use(express.text());
-app.use(express.static("./public"));
+app.use(express.static(path.join(__dirname, "public")));
 app.use(router);
 
 // Middleware לטיפול בשגיאות
