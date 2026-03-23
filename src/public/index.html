@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover" />
+    <title>Business Cards - Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <!-- Floating background shapes -->
+    <div class="floating-shape"></div>
+    <div class="floating-shape"></div>
+    <div class="floating-shape"></div>
+    
+    <header>
+      <div class="header-content">
+        <div class="brand">
+          <div class="logo"></div>
+          <div class="title">Business Cards</div>
+        </div>
+        <div class="header-actions">
+          <a href="/copyright.html" class="btn btn-secondary">זכויות יוצרים</a>
+        </div>
+      </div>
+    </header>
+    <div class="container">
+      <div class="grid">
+        <section class="panel">
+          <h2>התחברות</h2>
+          <form id="loginForm">
+            <div class="form-group">
+              <label for="username">שם משתמש</label>
+              <input id="username" name="username" type="text" placeholder="Michael / Zura / Lika / admin" required />
+            </div>
+            <div class="form-group">
+              <label for="password">סיסמה</label>
+              <input id="password" name="password" type="password" placeholder="Mp123456 / Zp123456 / Lp123456 / Aa123456" required />
+            </div>
+            <div class="btn-group">
+              <button class="btn btn-primary" id="submitBtn" type="submit">התחבר</button>
+              <button class="btn btn-secondary" id="logoutBtn" type="button">התנתק</button>
+            </div>
+            <div class="note">טיפ: Michael(Mp123456) - Admin, Zura(Zp123456) - Business, Lika(Lp123456) - Regular, admin(Aa123456) - Admin</div>
+            <div id="err" class="error"></div>
+          </form>
+          <div style="margin-top: 1.5rem">
+            <div class="note" style="margin-bottom: 0.75rem">או התחבר עם</div>
+            <div class="btn-group">
+              <button class="btn btn-danger" id="googleBtn" type="button">Google</button>
+            </div>
+            <div class="note">כפתור זה מפנה ל־/auth/google (ניתן לממש OAuth מאוחר יותר)</div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>כרטיסים</h2>
+          <div class="btn-group">
+            <button class="btn btn-primary" id="loadCards">טען כרטיסים</button>
+            <button class="btn btn-secondary" id="clearCards">נקה</button>
+          </div>
+          <div id="cardsErr" class="error"></div>
+          <div id="cardsGrid" class="cards-grid"></div>
+        </section>
+      </div>
+    </div>
+
+    <script>
+
+      const tokenKey = 'bc_token';
+      const form = document.getElementById('loginForm');
+      const out = document.getElementById('tokenBox');
+      const err = document.getElementById('err');
+      const btn = document.getElementById('submitBtn');
+      const usernameToEmail = { 
+        michael: 'michael@gmail.com', 
+        zura: 'zura@gmail.com', 
+        lika: 'lika@gmail.com',
+        admin: 'admin@gmail.com'
+      };
+      const logoutBtn = document.getElementById('logoutBtn');
+      const copyBtn = document.getElementById('copyBtn');
+      const claims = document.getElementById('claims');
+
+      const loadBtn = document.getElementById('loadCards');
+      const clearBtn = document.getElementById('clearCards');
+      const cardsGrid = document.getElementById('cardsGrid');
+      const cardsErr = document.getElementById('cardsErr');
+
+      function saveToken(t){ 
+        localStorage.setItem(tokenKey, t); 
+        document.body.classList.add('auth');
+        addTokenSections();
+        updateTokenDisplay(t);
+      }
+      function getToken(){ return localStorage.getItem(tokenKey) || ''; }
+      function clearToken(){ 
+        localStorage.removeItem(tokenKey); 
+        document.body.classList.remove('auth');
+        removeTokenSections();
+      }
+      
+      // הוספת קטעי הטוקן אחרי התחברות
+      function addTokenSections() {
+        if (document.getElementById('tokenBox')) return; // כבר קיים
+        
+        const googleSection = document.querySelector('.btn-group');
+        const parentDiv = googleSection.parentElement;
+        
+        // הוספת קטע טוקן
+        const tokenHTML = `
+          <h3>טוקן</h3>
+          <div class="token-display">
+            <input id="tokenBox" class="token-input" readonly placeholder="(לא מחובר)" />
+            <button class="btn btn-secondary" id="copyBtn" type="button">העתק</button>
+          </div>
+        `;
+        
+        // הוספת קטע פענוח טוקן
+        const claimsHTML = `
+          <div style="margin-top: 1.5rem">
+            <h3>פענוח טוקן</h3>
+            <div id="claims" class="claims-display">(אין נתונים)</div>
+          </div>
+        `;
+        
+        parentDiv.insertAdjacentHTML('beforeend', tokenHTML);
+        parentDiv.insertAdjacentHTML('beforeend', claimsHTML);
+        
+        // הוספת event listeners
+        document.getElementById('copyBtn')?.addEventListener('click', async () => {
+          try{ 
+            await navigator.clipboard.writeText(getToken()||''); 
+            document.getElementById('copyBtn').textContent='הועתק!'; 
+            setTimeout(()=>document.getElementById('copyBtn').textContent='העתק',1200);
+          }catch{}
+        });
+      }
+      
+      // הסרת קטעי הטוקן
+      function removeTokenSections() {
+        const tokenBox = document.getElementById('tokenBox');
+        const claims = document.getElementById('claims');
+        if (tokenBox) {
+          tokenBox.closest('div').previousElementSibling.remove(); // הסרת h3
+          tokenBox.closest('.token-display').remove();
+        }
+        if (claims) {
+          claims.closest('div').previousElementSibling.remove(); // הסרת h3
+          claims.closest('div').remove();
+        }
+      }
+      
+      // עדכון תצוגת הטוקן
+      function updateTokenDisplay(token) {
+        const out = document.getElementById('tokenBox');
+        if (out) out.value = token || '';
+        renderClaims(token); // תמיד נקרא - הפונקציה בודקת אם claims קיים
+      }
+      function decodeJwtPayload(token){ try{ const p = token.split('.')[1]; return JSON.parse(atob(p)); }catch{ return null; } }
+      function renderClaims(token){ 
+        const claims = document.getElementById('claims');
+        if (!claims) return;
+        const p = decodeJwtPayload(token||''); 
+        claims.textContent = p ? JSON.stringify(p,null,2) : '(אין נתונים)'; 
+      }
+
+      async function apiFetch(path, options={}){
+        const headers = Object.assign({'Content-Type':'application/json'}, options.headers||{});
+        const t = getToken();
+        if (t) headers['Authorization'] = 'Bearer ' + t;
+        const res = await fetch(path, Object.assign({}, options, { headers }));
+        return res;
+      }
+
+      // init
+      (function init(){ 
+        const t = getToken(); 
+        if (t){ 
+          document.body.classList.add('auth');
+          addTokenSections();
+          updateTokenDisplay(t);
+        } 
+      })();
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        err.textContent = '';
+        btn.disabled = true;
+        try {
+          const username = document.getElementById('username').value.trim();
+          const email = username.includes('@') ? username : (usernameToEmail[username.toLowerCase()] || `${username}@gmail.com`);
+          const password = document.getElementById('password').value;
+          const res = await apiFetch('/users/login', {
+            method: 'POST',
+            body: JSON.stringify({ email, password })
+          });
+          const text = await res.text();
+          if (!res.ok) { err.textContent = `שגיאה ${res.status}: ${text}`; return; }
+          // ה־API מחזיר מחרוזת טוקן, לא JSON
+          saveToken(text.replace(/\"/g,'').replace(/^"|"$/g,''));
+        } catch (ex) {
+          err.textContent = ex.message || 'שגיאת רשת';
+        } finally {
+          btn.disabled = false;
+        }
+      });
+
+      logoutBtn.addEventListener('click', () => { clearToken(); });
+
+      // התחברות עם Google (הכנה ל-OAuth)
+      const googleBtn = document.getElementById('googleBtn');
+      googleBtn?.addEventListener('click', () => {
+        window.location.href = '/auth/google';
+      });
+
+      function renderCards(cards){
+        if (!Array.isArray(cards)) { cardsGrid.innerHTML = '<div class="note">אין נתונים</div>'; return; }
+        cardsGrid.innerHTML = cards.map(c => `
+          <div class="card">
+            <div class="badge badge-primary">#${c.bizNumber ?? '—'}</div>
+            <h4>${(c.title||'ללא כותרת')}</h4>
+            <div class="subtitle">${c.subtitle||''}</div>
+            <div class="email">${c.email||''}</div>
+          </div>
+        `).join('');
+      }
+
+      loadBtn.addEventListener('click', async () => {
+        cardsErr.textContent = '';
+        cardsGrid.innerHTML = '<div class="loading">טוען כרטיסים...</div>';
+        try {
+          const res = await apiFetch('/cards');
+          const text = await res.text();
+          if (!res.ok) { cardsErr.textContent = `שגיאה ${res.status}: ${text}`; return; }
+          try { renderCards(JSON.parse(text)); } catch { cardsGrid.innerHTML = `<div class="claims-display">${text}</div>`; }
+        } catch (ex) {
+          cardsErr.textContent = ex.message || 'שגיאת רשת';
+        }
+      });
+      clearBtn.addEventListener('click', () => { cardsGrid.innerHTML = '<div class="note">(נוקה)</div>'; });
+    </script>
+  </body>
+  </html>
+
+

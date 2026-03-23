@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>זכויות יוצרים - Business Cards</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --primary: #6366f1;
+        --primary-dark: #4f46e5;
+        --secondary: #10b981;
+        --accent: #f59e0b;
+        --danger: #ef4444;
+        
+        --bg-primary: #0f172a;
+        --bg-secondary: #1e293b;
+        --bg-tertiary: #334155;
+        --bg-glass: rgba(30, 41, 59, 0.8);
+        
+        --text-primary: #f8fafc;
+        --text-secondary: #cbd5e1;
+        --text-muted: #94a3b8;
+        
+        --border: #334155;
+        --border-light: #475569;
+        --border-focus: #6366f1;
+        
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.3);
+        
+        --radius-lg: 0.75rem;
+        --radius-xl: 1rem;
+        --radius-2xl: 1.5rem;
+        
+        --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: linear-gradient(135deg, var(--bg-primary) 0%, #0c1220 100%);
+        color: var(--text-primary);
+        line-height: 1.6;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* Background Animation */
+      body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: 
+          radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+          radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+          radial-gradient(circle at 40% 40%, rgba(245, 158, 11, 0.05) 0%, transparent 50%);
+        z-index: -1;
+        animation: backgroundShift 20s ease-in-out infinite;
+      }
+
+      @keyframes backgroundShift {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.8; }
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .copyright-card {
+        background: var(--bg-glass);
+        backdrop-filter: blur(20px) saturate(180%);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-2xl);
+        padding: 3rem;
+        box-shadow: var(--shadow-xl);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .copyright-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--primary), transparent);
+        opacity: 0.5;
+      }
+
+      .copyright-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 2rem;
+        background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+      }
+
+      .copyright-title::before {
+        content: '⚖️';
+        font-size: 2rem;
+        filter: grayscale(1) brightness(0) invert(1);
+      }
+
+      .copyright-content {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        margin-bottom: 2rem;
+      }
+
+      .copyright-content p {
+        margin-bottom: 1.5rem;
+        color: var(--text-secondary);
+      }
+
+      .copyright-content .highlight {
+        color: var(--primary);
+        font-weight: 600;
+      }
+
+      .copyright-content .warning {
+        color: var(--accent);
+        font-weight: 600;
+      }
+
+      .copyright-content .developer {
+        color: var(--secondary);
+        font-weight: 700;
+        font-size: 1.2rem;
+      }
+
+      .confirmation-section {
+        background: rgba(99, 102, 241, 0.1);
+        border: 1px solid rgba(99, 102, 241, 0.3);
+        border-radius: var(--radius-lg);
+        padding: 2rem;
+        margin: 2rem 0;
+      }
+
+      .checkbox-container {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .checkbox {
+        width: 24px;
+        height: 24px;
+        border: 2px solid var(--border);
+        border-radius: 4px;
+        background: var(--bg-secondary);
+        cursor: pointer;
+        transition: var(--transition);
+        position: relative;
+      }
+
+      .checkbox.checked {
+        background: var(--primary);
+        border-color: var(--primary);
+      }
+
+      .checkbox.checked::after {
+        content: '✓';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-weight: bold;
+        font-size: 14px;
+      }
+
+      .checkbox-label {
+        color: var(--text-secondary);
+        font-size: 1rem;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 1rem 2rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border: none;
+        border-radius: var(--radius-lg);
+        cursor: pointer;
+        transition: var(--transition);
+        text-decoration: none;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        transition: var(--transition);
+      }
+
+      .btn:hover::before {
+        left: 100%;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
+        box-shadow: var(--shadow-lg);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-xl), var(--shadow-glow);
+      }
+
+      .btn-primary:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .btn-secondary {
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        border: 1px solid var(--border);
+      }
+
+      .btn-secondary:hover {
+        background: var(--bg-tertiary);
+        border-color: var(--border-light);
+      }
+
+      .button-group {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 1rem;
+        }
+        
+        .copyright-card {
+          padding: 2rem;
+        }
+        
+        .copyright-title {
+          font-size: 2rem;
+        }
+        
+        .button-group {
+          flex-direction: column;
+        }
+      }
+
+      .fade-in {
+        animation: fadeIn 0.6s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="copyright-card fade-in">
+        <h1 class="copyright-title">זכויות יוצרים</h1>
+        
+        <div class="copyright-content">
+          <p><strong class="highlight">אתר זה לשימוש פרטי בלבד.</strong></p>
+          
+          <p><strong class="warning">העתקה אסורה וכל דבר אחר הקשור לכך.</strong></p>
+          
+          <p>פיתוח אתר זה <strong class="highlight">לימודי בלבד</strong> ואין בשימוש ציבורי.</p>
+          
+          <p>אני מאשר בזאת שאני כתבתי את האתר זה:</p>
+          <p class="developer">מיכאל פפיסמדוב - MP</p>
+          
+          <p>ומתחייב שענין הזכויות הכוללים למפתחים צעירים ומתחילים.</p>
+        </div>
+
+        <div class="confirmation-section">
+          <div class="checkbox-container">
+            <div class="checkbox" id="readConfirmation"></div>
+            <label class="checkbox-label" for="readConfirmation">
+              אני מאשר שקראתי את כל התנאים והסכמתי להם
+            </label>
+          </div>
+        </div>
+
+        <div class="button-group">
+          <a href="/" class="btn btn-primary" id="continueBtn" style="pointer-events: none; opacity: 0.5;">
+            המשך לאתר
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const checkbox = document.getElementById('readConfirmation');
+      const continueBtn = document.getElementById('continueBtn');
+
+      checkbox.addEventListener('click', function() {
+        this.classList.toggle('checked');
+        
+        if (this.classList.contains('checked')) {
+          continueBtn.style.pointerEvents = 'auto';
+          continueBtn.style.opacity = '1';
+        } else {
+          continueBtn.style.pointerEvents = 'none';
+          continueBtn.style.opacity = '0.5';
+        }
+      });
+
+      // הוספת אנימציה נוספת
+      document.addEventListener('DOMContentLoaded', function() {
+        const card = document.querySelector('.copyright-card');
+        card.style.animationDelay = '0.2s';
+      });
+    </script>
+  </body>
+</html>
