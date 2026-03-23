@@ -32,6 +32,10 @@ const {
 // Middleware ברמת האפליקציה
 app.use(cors);
 app.use(logger);
+// דפדפנים מבקשים /favicon.ico — הפניה ל-SVG (נמנע 404 אחרי static)
+app.get("/favicon.ico", (req, res) => {
+  res.redirect(302, "/favicon.svg");
+});
 app.use(express.json());
 app.use(express.text());
 app.use(express.static(path.join(__dirname, "public")));
