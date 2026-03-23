@@ -1,21 +1,34 @@
 const mongoose = require("mongoose");
 const chalk = require("chalk");
 const config = require("config");
+const {
+  getAtlasConnectionUri,
+  getScriptMongoUri,
+} = require("../utils/mongoConnectionStrings");
 
 const ENV = config.get("NODE_ENV");
 let MONGO_URI = "";
 
 if (ENV === "development") {
-  MONGO_URI = "mongodb://localhost:27017/business_card_app";
+  MONGO_URI = getScriptMongoUri();
 } else {
-  const userName = config.get("DB_NAME");
-  const password = config.get("DB_PASSWORD");
-  MONGO_URI = `mongodb+srv://${userName}:${password}@hackeru-cluster.y5spzbw.mongodb.net/`;
+  MONGO_URI = getAtlasConnectionUri() || "";
 }
 
 (async () => {
   try {
-    console.log(chalk.blue("Connecting to:"), MONGO_URI);
+    if (!MONGO_URI) {
+      console.error(
+        chalk.red(
+          "חסר חיבור Atlas: הגדר MONGODB_URI או DB_NAME+DB_PASSWORD+MONGODB_CLUSTER_HOST"
+        )
+      );
+      process.exit(1);
+    }
+    console.log(
+      chalk.blue("Connecting to:"),
+      MONGO_URI.replace(/:[^:@]+@/, ":****@")
+    );
     await mongoose.connect(MONGO_URI);
 
     const cards = mongoose.connection.collection("cards");

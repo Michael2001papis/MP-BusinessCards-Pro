@@ -2,8 +2,10 @@
   "NODE_ENV": "production",
   "PORT": 9191,
   "TOKEN_GENERATOR": "jwt",
-  "DB_NAME": "dvnnka2",
-  "DB_PASSWORD": "davinika2001",
+  "DB_NAME": "",
+  "DB_PASSWORD": "",
+  "MONGODB_CLUSTER_HOST": "",
+  "MONGODB_URI": "",
   "LOGGER": "morgan",
   "DB": "MONGODB"
 }

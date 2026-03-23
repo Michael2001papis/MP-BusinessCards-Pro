@@ -1,19 +1,22 @@
 // חיבור למסד נתונים MongoDB Atlas
 const mongoose = require("mongoose");
 const chalk = require("chalk");
-const config = require("config");
+const { getAtlasConnectionUri } = require("../../utils/mongoConnectionStrings");
 
-const userName = config.get("DB_NAME");
-const password = config.get("DB_PASSWORD");
+const uri = getAtlasConnectionUri();
 
 // מניעת חיבורים כפולים ב-Serverless (הפעלות חוזרות / cold start)
 if ([1, 2].includes(mongoose.connection.readyState)) {
   // כבר מחובר או בתהליך חיבור
+} else if (!uri) {
+  console.log(
+    chalk.redBright(
+      "Atlas: הגדר MONGODB_URI (מחרוזת מלאה) או DB_NAME + DB_PASSWORD + MONGODB_CLUSTER_HOST במשתני סביבה."
+    )
+  );
 } else {
   mongoose
-    .connect(
-      `mongodb+srv://${userName}:${password}@hackeru-cluster.y5spzbw.mongodb.net/`
-    )
+    .connect(uri)
     .then(() => console.log(chalk.magentaBright("Connect To Atlas MongoDB!")))
     .catch((error) => {
       console.log(chalk.redBright(error));

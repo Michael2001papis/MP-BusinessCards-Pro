@@ -1,5 +1,14 @@
 const path = require("path");
-// מיקום קבצי config לא תלוי בתיקיית העבודה (חשוב אחרי העברת הפרויקט משורש אחר / IDE)
+const fs = require("fs");
+
+// טעינת .env לפי NODE_ENV לפני config — קבצי .env לא ב-Git
+const envName = process.env.NODE_ENV || "development";
+const envPath = path.join(__dirname, `.env.${envName}`);
+if (fs.existsSync(envPath)) {
+  require("dotenv").config({ path: envPath });
+}
+
+// מיקום קבצי config לא תלוי בתיקיית העבודה
 process.env.NODE_CONFIG_DIR = path.join(__dirname, "config");
 
 const express = require("express");
@@ -10,6 +19,11 @@ const { handleError } = require("./utils/errorHandler");
 const logger = require("./logger/loggerService");
 const connectToDb = require("./DB/dbService");
 const config = require("config");
+
+if (process.env.NODE_ENV === "production" && !config.get("JWT_KEY")) {
+  throw new Error("JWT_KEY is required in production (Vercel / env or config)");
+}
+
 const {
   generateInitialCards,
   generateInitialUsers,

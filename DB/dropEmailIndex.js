@@ -1,13 +1,15 @@
 const mongoose = require("mongoose");
 const chalk = require("chalk");
+const { getScriptMongoUri } = require("../utils/mongoConnectionStrings");
 
-// Try to read from env; fallback to local dev
-const MONGO_URI =
-  process.env.MONGO_URI || "mongodb://localhost:27017/business_card_app";
+const MONGO_URI = getScriptMongoUri();
 
 (async () => {
   try {
-    console.log(chalk.blue("Connecting to:"), MONGO_URI);
+    console.log(
+      chalk.blue("Connecting to:"),
+      MONGO_URI.replace(/:[^:@]+@/, ":****@")
+    );
     await mongoose.connect(MONGO_URI);
 
     const cards = mongoose.connection.collection("cards");

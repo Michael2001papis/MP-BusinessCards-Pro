@@ -69,6 +69,15 @@ npm run dev
 ```
 (הסקריפטים ב-`package.json` מותאמים ל-Windows עם `set NODE_ENV=...`.)
 
+### **משתני סביבה (אבטחה)**
+- **לא לעשות commit** לקבצי `.env*` — הם ב-[`.gitignore`](.gitignore). רק [`.env.example`](.env.example) ב-Git כתבנית.
+- בעת עליית השרת נטען אוטומטית `dotenv` מקובץ **`.env.development`** או **`.env.production`** לפי `NODE_ENV` (אם הקובץ קיים).
+- ערכים רגישים מגיעים מ-**משתני סביבה** (מערכת ההפעלה, Vercel, או `.env` מקומי) וממופים ב-[`config/custom-environment-variables.json`](config/custom-environment-variables.json).
+- **חיבור ל-MongoDB Atlas** — אחת מהאפשרויות:
+  - **`MONGODB_URI`** — מחרוזת `mongodb+srv://...` מלאה (מומלץ ל-Vercel).
+  - או **`DB_NAME`**, **`DB_PASSWORD`**, **`MONGODB_CLUSTER_HOST`** (שם ה-host של הקלאסטר ב-Atlas, בלי `mongodb+srv://`).
+- **סודות שהופיעו בעבר ב-Git / בקונפיג ישן:** מומלץ **לסובב** JWT, סיסמת Atlas וכל מפתח — גם אם הוסרו מהקבצים.
+
 ---
 
 ## ☁️ **פריסה ב-Vercel**
@@ -81,12 +90,14 @@ npm run dev
 
 | משתנה | הסבר |
 |--------|------|
-| `JWT_KEY` | מפתח חתימה ל-JWT (אותו ערך כמו בפרודקשן) |
-| `DB_NAME` | שם משתמש MongoDB Atlas |
-| `DB_PASSWORD` | סיסמת MongoDB Atlas |
+| `JWT_KEY` | מפתח חתימה ל-JWT (חובה בפרודקשן) |
+| `MONGODB_URI` | **מומלץ:** מחרוזת `mongodb+srv://USER:PASS@cluster...mongodb.net/` מלאה |
+| `DB_NAME` | משתמש Atlas (אם לא משתמשים ב-`MONGODB_URI`) |
+| `DB_PASSWORD` | סיסמת Atlas (אם לא משתמשים ב-`MONGODB_URI`) |
+| `MONGODB_CLUSTER_HOST` | לדוגמה `cluster0.xxxxx.mongodb.net` (אם לא משתמשים ב-`MONGODB_URI`) |
 | `NODE_ENV` | `production` (לרוב Vercel כבר מגדיר) |
 
-המפתחות האלה נטענים דרך [`config/custom-environment-variables.json`](config/custom-environment-variables.json) ודורסים את `config/production.json` כשהם מוגדרים.
+המפתחות נטענים דרך [`config/custom-environment-variables.json`](config/custom-environment-variables.json) ודורסים את ערכי ברירת המחדל ב-`config/` כשהם מוגדרים.
 
 3. **Deploy** — אחרי push ל-`main`, Vercel יבנה מחדש.
 
