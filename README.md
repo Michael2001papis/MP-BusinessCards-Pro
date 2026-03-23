@@ -59,9 +59,43 @@ npm install
 npm start
 ```
 
-### **גישה לאתר:**
+### **גישה לאתר (פיתוח):**
 - **Frontend:** http://localhost:8181
 - **API:** http://localhost:8181/api
+
+### **מצב פיתוח (`nodemon`):**
+```bash
+npm run dev
+```
+(הסקריפטים ב-`package.json` מותאמים ל-Windows עם `set NODE_ENV=...`.)
+
+---
+
+## ☁️ **פריסה ב-Vercel**
+
+הפרויקט מוגדר כ-**Express** שרץ כ-**Serverless Function** דרך `api/index.js` ו-`vercel.json` (כל הנתיבים מנותבים לפונקציה).
+
+### **לפני Deploy**
+1. חבר את ה-repository ל-Vercel (Import Project).
+2. ב-**Settings → Environment Variables** הגדר לפחות (לסביבת Production — ואם צריך גם Preview):
+
+| משתנה | הסבר |
+|--------|------|
+| `JWT_KEY` | מפתח חתימה ל-JWT (אותו ערך כמו בפרודקשן) |
+| `DB_NAME` | שם משתמש MongoDB Atlas |
+| `DB_PASSWORD` | סיסמת MongoDB Atlas |
+| `NODE_ENV` | `production` (לרוב Vercel כבר מגדיר) |
+
+המפתחות האלה נטענים דרך [`config/custom-environment-variables.json`](config/custom-environment-variables.json) ודורסים את `config/production.json` כשהם מוגדרים.
+
+3. **Deploy** — אחרי push ל-`main`, Vercel יבנה מחדש.
+
+### **למה הופיע 500 / FUNCTION_INVOCATION_FAILED לפני התיקון**
+- ב-Serverless **אין** `app.listen()` — חייבים לייצא את אפליקציית Express ולטעון את MongoDB בלי להאזין לפורט.
+- כתיבה לתיקיית `logs/` בשרת Vercel נכשלת (מערכת קבצים read-only); ה-File Logger משתמש ב-`/tmp/logs` כש-`VERCEL` מוגדר.
+
+### **מגבלות**
+- **Cold start** וחיבור ל-Atlas עלולים לקחת כמה שניות; בתוכנית חינם של Vercel יש מגבלת זמן לביצוע פונקציה — אם יש timeout, שקול תוכנית Pro או אופטימיזציה של חיבור MongoDB.
 
 ---
 
@@ -205,10 +239,13 @@ npm start
 
 ```
 (שורש הפרויקט)
-├── server.js                    # נקודת כניסה ראשית
+├── server.js                    # נקודת כניסה ראשית (מיוצא גם ל-Vercel)
+├── vercel.json                  # ניתוב כל ה-HTTP ל-Serverless
+├── api/index.js                 # כניסת Vercel — מייצא את אותו Express
 ├── package.json                 # תלויות הפרויקט
 ├── README.md                    # תיעוד הפרויקט
 ├── .gitignore                   # קבצים להתעלמות מ-Git
+├── config/                      # הגדרות (כולל custom-environment-variables)
 ├── DB/                          # חיבור למסד נתונים
 │   ├── dbService.js
 │   └── mongoDB/
@@ -245,7 +282,8 @@ npm start
 
 ### **1. File Logger:**
 - שמירת שגיאות 400+ בקובץ יומי
-- מיקום: `logs/YYYY-MM-DD.log`
+- **מקומי:** `logs/YYYY-MM-DD.log`
+- **Vercel:** `/tmp/logs/YYYY-MM-DD.log` (מערכת הקבצים בפונקציה read-only)
 - פורמט: `[תאריך] [סטטוס] [הודעת שגיאה]`
 
 ---

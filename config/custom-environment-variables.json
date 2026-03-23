@@ -1,0 +1,5 @@
+{
+  "JWT_KEY": "JWT_KEY",
+  "DB_NAME": "DB_NAME",
+  "DB_PASSWORD": "DB_PASSWORD"
+}

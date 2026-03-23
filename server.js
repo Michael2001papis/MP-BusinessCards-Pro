@@ -29,9 +29,25 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = config.get("PORT");
-app.listen(PORT, () => {
-  console.log(`INIT SERVER ON: http://localhost:${PORT}`);
-  connectToDb();
-  generateInitialCards();
-  generateInitialUsers();
-});
+const isVercel = Boolean(process.env.VERCEL);
+
+function runBoot() {
+  try {
+    connectToDb();
+    generateInitialCards();
+    generateInitialUsers();
+  } catch (err) {
+    console.error("Boot error:", err);
+  }
+}
+
+if (isVercel) {
+  runBoot();
+} else {
+  app.listen(PORT, () => {
+    console.log(`INIT SERVER ON: http://localhost:${PORT}`);
+    runBoot();
+  });
+}
+
+module.exports = app;

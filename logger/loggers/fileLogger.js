@@ -8,7 +8,10 @@ const logErrorToFile = (status, message, url, method) => {
     // יצירת שם קובץ לפי התאריך
     const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
     const fileName = `${today}.log`;
-    const logsDir = path.join(__dirname, '../../logs');
+    // ב-Vercel מערכת הקבצים של הפונקציה read-only; רק /tmp ניתן לכתיבה
+    const logsDir = process.env.VERCEL
+      ? path.join("/tmp", "logs")
+      : path.join(__dirname, "../../logs");
     const filePath = path.join(logsDir, fileName);
     
     // וידוא שתיקיית logs קיימת
