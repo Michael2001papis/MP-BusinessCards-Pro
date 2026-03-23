@@ -12,7 +12,7 @@ try {
 } catch (err) {
   console.error("[api/index] failed to load server:", err);
   const fallback = express();
-  const htmlPath = path.join(__dirname, "..", "public", "index.html");
+  const htmlPath = path.join(__dirname, "..", "index.html");
   fallback.use((req, res) => {
     try {
       if (fs.existsSync(htmlPath)) {

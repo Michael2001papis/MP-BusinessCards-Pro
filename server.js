@@ -23,15 +23,15 @@ if (!process.env.NODE_CONFIG_DIR) {
   process.env.NODE_CONFIG_DIR = path.join(__dirname, "config");
 }
 
-// Vercel: עוזר ל־bundler לכלול את public/ (בנוסף ל-includeFiles ב-vercel.json)
+// Vercel: עוזר ל־bundler לכלול את index.html בשורש (בנוסף ל-includeFiles ב-vercel.json)
 if (process.env.VERCEL) {
   try {
-    const indexHtml = path.join(__dirname, "public", "index.html");
+    const indexHtml = path.join(__dirname, "index.html");
     if (fs.existsSync(indexHtml)) {
       fs.readFileSync(indexHtml, "utf8");
     }
   } catch (e) {
-    console.error("Vercel: public/index.html not readable", e.message);
+    console.error("Vercel: index.html not readable", e.message);
   }
 }
 
@@ -57,6 +57,9 @@ app.get("/favicon.ico", (req, res) => {
 });
 app.use(express.json());
 app.use(express.text());
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
 app.use(express.static(path.join(__dirname, "public")));
 app.use(router);
 

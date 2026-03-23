@@ -278,8 +278,8 @@ npm run dev
 ├── initialData/                 # נתונים ראשוניים
 │   ├── initialData.json
 │   └── initialDataService.js
-├── public/                      # קבצי Frontend
-│   ├── index.html
+├── index.html                   # דף הבית (שורש הפרויקט)
+├── public/                      # קבצי Frontend סטטיים
 │   ├── styles.css
 │   └── copyright.html
 ├── logger/                      # מערכת לוגים
