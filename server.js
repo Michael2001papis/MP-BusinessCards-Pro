@@ -38,6 +38,7 @@ if (process.env.VERCEL) {
 const express = require("express");
 const cors = require("cors");
 const app = express();
+app.set("trust proxy", 1);
 const router = require("./router/router");
 const morganLogger = require("./logger/loggers/morganLogger");
 const { handleError } = require("./utils/errorHandler");
@@ -54,6 +55,9 @@ app.use(cors({ origin: true, optionsSuccessStatus: 200 }));
 app.use(morganLogger);
 app.get("/favicon.ico", (req, res) => {
   res.redirect(302, "/favicon.svg");
+});
+app.get("/health", (req, res) => {
+  res.status(200).json({ ok: true, env: process.env.NODE_ENV || "development" });
 });
 app.use(express.json());
 app.use(express.text());

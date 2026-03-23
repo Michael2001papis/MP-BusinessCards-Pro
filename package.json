@@ -7,7 +7,9 @@
     "build": "node --check server.js && node --check api/index.js",
     "preview": "echo [MP-BusinessCards-Pro] No Vite preview. Use: npm start (production) or npm run dev (development)",
     "start": "set NODE_ENV=production&& node .",
-    "dev": "set NODE_ENV=development&& nodemon ."
+    "dev": "set NODE_ENV=development&& nodemon .",
+    "start:unix": "NODE_ENV=production node .",
+    "dev:unix": "NODE_ENV=development nodemon ."
   },
   "author": "",
   "license": "ISC",

@@ -10,8 +10,11 @@ const generateAuthToken = (user) => {
     err.status = 500;
     throw err;
   }
-  const { _id, isAdmin, isBusiness } = user;
-  return jwt.sign({ _id, isAdmin, isBusiness }, key);
+  const { _id, isAdmin, isBusiness, allowedRegions } = user;
+  return jwt.sign(
+    { _id, isAdmin, isBusiness, allowedRegions: allowedRegions || [] },
+    key
+  );
 };
 
 const verifyToken = (token) => {

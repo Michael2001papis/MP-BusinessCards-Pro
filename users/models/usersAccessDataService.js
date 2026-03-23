@@ -39,7 +39,7 @@ const login = async ({ email, password }) => {
       const token = generateAuthToken(user);
       return Promise.resolve(token);
     } catch (error) {
-      error.status = 400;
+      if (error.status == null) error.status = 400;
       return Promise.reject(error);
     }
   }
