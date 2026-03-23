@@ -1,4 +1,4 @@
-// src/DB/dbService.js
+// DB/dbService.js
 const config = require("config");
 const ENV = config.get("NODE_ENV");
 
