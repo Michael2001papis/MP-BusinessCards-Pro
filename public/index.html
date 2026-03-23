@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <script src="/api-config.js"></script>
   </head>
   <body>
     <!-- Floating background shapes -->
@@ -69,6 +70,14 @@
     </div>
 
     <script>
+      function apiUrl(path) {
+        const base =
+          typeof window !== "undefined" && window.__API_BASE__
+            ? String(window.__API_BASE__).replace(/\/$/, "")
+            : "";
+        const p = path.startsWith("/") ? path : "/" + path;
+        return base ? base + p : p;
+      }
 
       const tokenKey = 'bc_token';
       const form = document.getElementById('loginForm');
@@ -172,7 +181,7 @@
         const headers = Object.assign({'Content-Type':'application/json'}, options.headers||{});
         const t = getToken();
         if (t) headers['Authorization'] = 'Bearer ' + t;
-        const res = await fetch(path, Object.assign({}, options, { headers }));
+        const res = await fetch(apiUrl(path), Object.assign({}, options, { headers }));
         return res;
       }
 
@@ -214,7 +223,7 @@
       // התחברות עם Google (הכנה ל-OAuth)
       const googleBtn = document.getElementById('googleBtn');
       googleBtn?.addEventListener('click', () => {
-        window.location.href = '/auth/google';
+        window.location.href = apiUrl('/auth/google');
       });
 
       function renderCards(cards){
