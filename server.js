@@ -23,6 +23,18 @@ if (!process.env.NODE_CONFIG_DIR) {
   process.env.NODE_CONFIG_DIR = path.join(__dirname, "config");
 }
 
+// Vercel: עוזר ל־bundler לכלול את public/ (בנוסף ל-includeFiles ב-vercel.json)
+if (process.env.VERCEL) {
+  try {
+    const indexHtml = path.join(__dirname, "public", "index.html");
+    if (fs.existsSync(indexHtml)) {
+      fs.readFileSync(indexHtml, "utf8");
+    }
+  } catch (e) {
+    console.error("Vercel: public/index.html not readable", e.message);
+  }
+}
+
 const express = require("express");
 const cors = require("cors");
 const app = express();
@@ -37,23 +49,9 @@ const {
   generateInitialUsers,
 } = require("./initialData/initialDataService");
 
-// Middleware — cors/morgan ישירות על app (לא אפליקציות מקוננות; נמנע בעיות ב-Vercel/Express 5)
+// Middleware — cors/morgan ישירות על app
 app.use(cors({ origin: true, optionsSuccessStatus: 200 }));
-
-// Vercel: בלי JWT האפליקציה לא יכולה לחתום טוקנים — 503 JSON ברור, לא קריסת פונקציה
-app.use((req, res, next) => {
-  if (process.env.NODE_ENV === "production" && !config.get("JWT_KEY")) {
-    return res.status(503).type("json").send({
-      error: "Configuration",
-      message:
-        "JWT_KEY is missing. In Vercel: Project → Settings → Environment Variables → add JWT_KEY.",
-    });
-  }
-  next();
-});
-
 app.use(morganLogger);
-// דפדפנים מבקשים /favicon.ico — הפניה ל-SVG (נמנע 404 אחרי static)
 app.get("/favicon.ico", (req, res) => {
   res.redirect(302, "/favicon.svg");
 });
