@@ -1,9 +1,11 @@
 /**
- * Atlas (production): MONGODB_URI מלא, או DB_NAME + DB_PASSWORD + MONGODB_CLUSTER_HOST.
- * לא שומרים סיסמאות בקוד או ב-config שב-Git.
+ * חיבור MongoDB — שם רשמי אחד למחרוזת מלאה: MONGODB_URI (מומלץ, כולל Vercel).
+ * MONGO_URI נשמר רק לתאימות לאחור (אל תשתמש בפרויקטים חדשים).
  */
 function getAtlasConnectionUri() {
-  const envUri = process.env.MONGODB_URI || process.env.MONGO_URI;
+  const envUri =
+    process.env.MONGODB_URI ||
+    process.env.MONGO_URI;
   if (envUri && String(envUri).trim().startsWith("mongodb+srv://")) {
     return String(envUri).trim();
   }
@@ -21,11 +23,14 @@ function getAtlasConnectionUri() {
   return `mongodb+srv://${encodeURIComponent(String(userName))}:${encodeURIComponent(String(password))}@${h}/`;
 }
 
-/** סקריפטים: עדיפות MONGO_URI, MONGODB_URI, אחר כך לוקאלי — בלי טעינת config */
+/**
+ * סקריפטים ב-DB/ — חיבור לוקאלי או URI מלא.
+ * עדיפות: MONGODB_URI, אחר כך MONGO_URI (legacy), אחר כך ברירת מחדל לוקאלית.
+ */
 function getScriptMongoUri() {
   return (
-    process.env.MONGO_URI ||
     process.env.MONGODB_URI ||
+    process.env.MONGO_URI ||
     "mongodb://localhost:27017/business_card_app"
   );
 }

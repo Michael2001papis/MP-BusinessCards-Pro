@@ -1,4 +1,5 @@
-const DB = process.env.DB || "MONGODB";
+const config = require("config");
+const DB = config.get("DB");
 const User = require("./mongodb/User");
 const lodash = require("lodash");
 const { handleBadRequest } = require("../../utils/errorHandler");
