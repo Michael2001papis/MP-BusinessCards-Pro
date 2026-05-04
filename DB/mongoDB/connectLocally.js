@@ -1,4 +1,4 @@
-// Copyright (c) 2026 מיכאל פפיסמדוב MP זכויות יוצרים
+// Copyright (c) 2026 מיכאל פפיסמדוב MP זכויות יוצרים 15:45
 // חיבור מקומי למסד נתונים MongoDB
 const mongoose = require("mongoose");
 const chalk = require("chalk");

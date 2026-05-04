@@ -1,4 +1,4 @@
-// Copyright (c) 2026 מיכאל פפיסמדוב MP זכויות יוצרים
+// Copyright (c) 2026 מיכאל פפיסמדוב MP זכויות יוצרים 15:45
 const express = require("express");
 const { handleError } = require("../../utils/errorHandler");
 const { auth, requireAdmin, requireBusiness } = require("../../auth/authService");

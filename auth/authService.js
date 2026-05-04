@@ -1,4 +1,4 @@
-// Copyright (c) 2026 מיכאל פפיסמדוב MP זכויות יוצרים
+// Copyright (c) 2026 מיכאל פפיסמדוב MP זכויות יוצרים 15:45
 const { verifyToken } = require("./Providers/jwt");
 const { handleError } = require("../utils/errorHandler");
 const config = require("config");

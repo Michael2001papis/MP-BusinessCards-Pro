@@ -1,4 +1,4 @@
-// Copyright (c) 2026 מיכאל פפיסמדוב MP זכויות יוצרים
+// Copyright (c) 2026 מיכאל פפיסמדוב MP זכויות יוצרים 15:45
 const jwt = require("jsonwebtoken");
 const { getJwtKey } = require("../../utils/jwtKey");
 

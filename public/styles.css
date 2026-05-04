@@ -1,4 +1,5 @@
-/* Copyright (c) 2026 מיכאל פפיסמדוב MP זכויות יוצרים */
+/* Copyright (c) 2026 מיכאל פפיסמדוב MP זכויות יוצרים 15:45 */
+/* Michael Papismedov MP - 04/05/2026 15:45 */
 /* Modern Business Cards App Styles */
 :root {
   --primary: #6366f1;
@@ -53,6 +54,14 @@ body {
   line-height: 1.6;
   min-height: 100vh;
   overflow-x: hidden;
+}
+
+.site-footer {
+  width: 100%;
+  padding: 1.5rem 1rem 2rem;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  text-align: center;
 }
 
 /* Background Animation */
