@@ -1,3 +1,4 @@
+// Copyright (c) 2026 מיכאל פפיסמדוב MP זכויות יוצרים
 const Card = require("./mongodb/Card");
 const { handleBadRequest } = require("../../utils/errorHandler");
 const config = require("config");

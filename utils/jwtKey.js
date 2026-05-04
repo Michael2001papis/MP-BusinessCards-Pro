@@ -1,3 +1,4 @@
+// Copyright (c) 2026 מיכאל פפיסמדוב MP זכויות יוצרים
 const config = require("config");
 
 /**

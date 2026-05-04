@@ -1,3 +1,4 @@
+// Copyright (c) 2026 מיכאל פפיסמדוב MP זכויות יוצרים
 const registerValidation = require("./Joi/registerValidation");
 const loginValidation = require("./Joi/loginValidation");
 const userUpdateValidation = require("./Joi/userUpdateValidation");

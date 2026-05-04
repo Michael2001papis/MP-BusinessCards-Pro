@@ -1,3 +1,4 @@
+// Copyright (c) 2026 מיכאל פפיסמדוב MP זכויות יוצרים
 // DB/dbService.js
 const config = require("config");
 const mongoose = require("mongoose");

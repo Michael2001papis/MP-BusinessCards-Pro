@@ -1,3 +1,4 @@
+// Copyright (c) 2026 מיכאל פפיסמדוב MP זכויות יוצרים
 // חיבור מקומי למסד נתונים MongoDB
 const mongoose = require("mongoose");
 const chalk = require("chalk");

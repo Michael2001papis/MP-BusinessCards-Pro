@@ -1,3 +1,4 @@
+// Copyright (c) 2026 מיכאל פפיסמדוב MP זכויות יוצרים
 const express = require("express");
 const { handleError } = require("../../utils/errorHandler");
 const { auth, requireAdmin, requireBusiness, limitRegion } = require("../../auth/authService");

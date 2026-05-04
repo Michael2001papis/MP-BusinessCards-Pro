@@ -1,3 +1,4 @@
+// Copyright (c) 2026 מיכאל פפיסמדוב MP זכויות יוצרים
 const chalk = require("chalk");
 const express = require("express");
 const router = express.Router();

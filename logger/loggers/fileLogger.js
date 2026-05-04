@@ -1,3 +1,4 @@
+// Copyright (c) 2026 מיכאל פפיסמדוב MP זכויות יוצרים
 const fs = require("fs");
 const path = require("path");
 const currentDateTimeStr = require("../../utils/dateTimeStr");

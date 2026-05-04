@@ -1,4 +1,5 @@
 {
+  "_copyright": "מיכאל פפיסמדוב MP זכויות יוצרים",
   "NODE_ENV": "production",
   "PORT": 9191,
   "TOKEN_GENERATOR": "jwt",

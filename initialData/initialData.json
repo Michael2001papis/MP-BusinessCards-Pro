@@ -1,67 +1,105 @@
 {
+  "_copyright": "מיכאל פפיסמדוב MP זכויות יוצרים",
   "users": [
     {
-      "name": { "first": "Michael", "last": "Papismedov" },
+      "name": {
+        "first": "Michael",
+        "last": "Papismedov"
+      },
       "isBusiness": true,
       "isAdmin": true,
       "phone": "0508535941",
       "email": "michael@gmail.com",
       "password": "Mp123456",
-      "allowedRegions": ["ישראל", "אמריקה", "גיאורגיה"],
+      "allowedRegions": [
+        "ישראל",
+        "אמריקה",
+        "גיאורגיה"
+      ],
       "address": {
         "country": "ישראל",
         "city": "חולון",
         "street": "רחוב לדוגמה",
         "houseNumber": "5"
       },
-      "image": { "url": "", "alt": "" }
+      "image": {
+        "url": "",
+        "alt": ""
+      }
     },
     {
-      "name": { "first": "Zura", "last": "Papismedov" },
+      "name": {
+        "first": "Zura",
+        "last": "Papismedov"
+      },
       "isBusiness": true,
       "phone": "0545820008",
       "email": "zura@gmail.com",
       "password": "Zp123456",
-      "allowedRegions": ["ישראל", "גיאורגיה"],
+      "allowedRegions": [
+        "ישראל",
+        "גיאורגיה"
+      ],
       "address": {
         "country": "ישראל",
         "city": "ראשון לציון",
         "street": "רחוב לדוגמה",
         "houseNumber": "5"
       },
-      "image": { "url": "", "alt": "" }
+      "image": {
+        "url": "",
+        "alt": ""
+      }
     },
     {
-      "name": { "first": "Lika", "last": "Papismedov" },
+      "name": {
+        "first": "Lika",
+        "last": "Papismedov"
+      },
       "isBusiness": false,
       "isAdmin": false,
       "phone": "0524266481",
       "email": "lika@gmail.com",
       "password": "Lp123456",
-      "allowedRegions": ["ישראל"],
+      "allowedRegions": [
+        "ישראל"
+      ],
       "address": {
         "country": "ישראל",
         "city": "חולון",
         "street": "רחוב לדוגמה",
         "houseNumber": "5"
       },
-      "image": { "url": "", "alt": "" }
+      "image": {
+        "url": "",
+        "alt": ""
+      }
     },
     {
-      "name": { "first": "Admin", "last": "User" },
+      "name": {
+        "first": "Admin",
+        "last": "User"
+      },
       "isBusiness": true,
       "isAdmin": true,
       "phone": "0500000000",
       "email": "admin@gmail.com",
       "password": "Aa123456",
-      "allowedRegions": ["ישראל", "אמריקה", "גיאורגיה"],
+      "allowedRegions": [
+        "ישראל",
+        "אמריקה",
+        "גיאורגיה"
+      ],
       "address": {
         "country": "ישראל",
         "city": "תל אביב",
         "street": "רחוב אדמין",
         "houseNumber": "1"
       },
-      "image": { "url": "", "alt": "" }
+      "image": {
+        "url": "",
+        "alt": ""
+      }
     }
   ],
   "cards": [

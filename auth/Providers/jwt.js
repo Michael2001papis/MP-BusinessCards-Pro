@@ -1,3 +1,4 @@
+// Copyright (c) 2026 מיכאל פפיסמדוב MP זכויות יוצרים
 const jwt = require("jsonwebtoken");
 const { getJwtKey } = require("../../utils/jwtKey");
 

@@ -1,3 +1,4 @@
+// Copyright (c) 2026 מיכאל פפיסמדוב MP זכויות יוצרים
 const normalizeUser = (rawUser) => {
   const name = { ...rawUser.name, middle: rawUser.name.middle || "" };
 

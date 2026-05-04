@@ -1,3 +1,4 @@
+// Copyright (c) 2026 מיכאל פפיסמדוב MP זכויות יוצרים
 const date = new Date(Date.now());
 
 const year = date.getFullYear();

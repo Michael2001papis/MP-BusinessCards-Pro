@@ -1,3 +1,4 @@
+<!-- Copyright (c) 2026 מיכאל פפיסמדוב MP זכויות יוצרים -->
 # MP-BusinessCards-Pro
 
 **Business Cards Management System** — אפליקציית ניהול כרטיסי ביקור דיגיטליים (Node.js 18, Express, MongoDB, JWT).

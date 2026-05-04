@@ -1,3 +1,4 @@
+// Copyright (c) 2026 מיכאל פפיסמדוב MP זכויות יוצרים
 /**
  * כניסת Vercel Serverless — מייצא את אפליקציית Express.
  * אם טעינת server נכשלת, מנסים להחזיר לפחות את index.html הסטטי.

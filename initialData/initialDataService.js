@@ -1,3 +1,4 @@
+// Copyright (c) 2026 מיכאל פפיסמדוב MP זכויות יוצרים
 const data = require("./initialData.json");
 const normalizeUser = require("../users/helpers/normalizeUser");
 const normalizeCard = require("../cards/helpers/normalizeCard");

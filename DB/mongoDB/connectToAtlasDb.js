@@ -1,3 +1,4 @@
+// Copyright (c) 2026 מיכאל פפיסמדוב MP זכויות יוצרים
 // חיבור למסד נתונים MongoDB Atlas
 const mongoose = require("mongoose");
 const chalk = require("chalk");

@@ -1,3 +1,4 @@
+// Copyright (c) 2026 מיכאל פפיסמדוב MP זכויות יוצרים
 const express = require("express");
 const router = express.Router();
 const cardsController = require("../cards/routes/cardController");

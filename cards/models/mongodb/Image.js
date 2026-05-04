@@ -1,3 +1,4 @@
+// Copyright (c) 2026 מיכאל פפיסמדוב MP זכויות יוצרים
 const mongoose = require("mongoose");
 const { URL, DEFAULT_VALIDATION } = require("../../helpers/mongooseValidators");
 

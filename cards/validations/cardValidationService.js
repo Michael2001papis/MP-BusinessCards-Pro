@@ -1,3 +1,4 @@
+// Copyright (c) 2026 מיכאל פפיסמדוב MP זכויות יוצרים
 const validateCardWithJoi = require("./Joi/validateCardWithJoi");
 
 const validator = undefined || "Joi";

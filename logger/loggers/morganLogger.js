@@ -1,3 +1,4 @@
+// Copyright (c) 2026 מיכאל פפיסמדוב MP זכויות יוצרים
 const chalk = require("chalk");
 const morgan = require("morgan");
 const currentDateTimeStr = require("../../utils/dateTimeStr");
