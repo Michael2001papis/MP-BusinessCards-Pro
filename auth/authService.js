@@ -5,6 +5,14 @@ const config = require("config");
 
 const tokenGenerator = config.get("TOKEN_GENERATOR") || "jwt";
 
+const guestUser = {
+  _id: "guest",
+  isGuest: true,
+  isAdmin: false,
+  isBusiness: false,
+  allowedRegions: [],
+};
+
 /**
  * Middleware אימות בסיסי (JWT)
  * מצפה לכותרת x-auth-token עם טוקן חוקי.
@@ -12,32 +20,40 @@ const tokenGenerator = config.get("TOKEN_GENERATOR") || "jwt";
  */
 const auth = (req, res, next) => {
   if (tokenGenerator === "jwt") {
-    try {
-      const tokenFromClient = req.header("x-auth-token") || req.header("authorization")?.replace(/^Bearer\s+/i, "");
-      if (!tokenFromClient) {
-        throw new Error("Authantication Error: Please Login/Authunticate");
-      }
+    const tokenFromClient =
+      req.header("x-auth-token") ||
+      req.header("authorization")?.replace(/^Bearer\s+/i, "");
 
+    if (!tokenFromClient) {
+      req.user = guestUser;
+      return next();
+    }
+
+    try {
       const userData = verifyToken(tokenFromClient);
       if (!userData) {
-        throw new Error("Authantication Error: Unauthrize User");
+        req.user = guestUser;
+        return next();
       }
 
       req.user = userData;
       return next();
     } catch (error) {
-      handleError(res, 401, error.message, req);
+      req.user = guestUser;
+      return next();
     }
   }
-  return handleError(res, 500, "Use jwt!", req);
+  req.user = guestUser;
+  return next();
 };
 
 exports.auth = auth;
+exports.guestUser = guestUser;
 /**
  * Middleware בדיקת הרשאת אדמין בלבד
  */
 exports.requireAdmin = (req, res, next) => {
-  if (!req.user?.isAdmin) return handleError(res, 403, "Authorization Error: Admins only", req);
+  if (!req.user?.isAdmin) return handleError(res, 403, "Demo mode: admin action is disabled", req);
   next();
 };
 
@@ -46,7 +62,7 @@ exports.requireAdmin = (req, res, next) => {
  */
 exports.requireBusiness = (req, res, next) => {
   if (!req.user?.isBusiness && !req.user?.isAdmin)
-    return handleError(res, 403, "Authorization Error: Business or Admin required", req);
+    return handleError(res, 403, "Demo mode: business action is disabled", req);
   next();
 };
 

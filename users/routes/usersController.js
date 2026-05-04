@@ -11,6 +11,7 @@ const {
   deleteUser,
   loginUser,
 } = require("../services/usersService");
+const { auth, requireAdmin } = require("../../auth/authService");
 
 router.get("/", async (req, res) => {
   try {
@@ -49,7 +50,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, requireAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const user = await updateUser(id, req.body);
@@ -64,7 +65,7 @@ router.patch("/:id", (req, res) => {
   res.send(`Patch from Users with id: ${id}`);
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, requireAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const user = await deleteUser(id);

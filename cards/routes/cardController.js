@@ -1,6 +1,7 @@
 // Copyright (c) 2026 מיכאל פפיסמדוב MP זכויות יוצרים
 const express = require("express");
 const { handleError } = require("../../utils/errorHandler");
+const { auth, requireAdmin, requireBusiness } = require("../../auth/authService");
 const {
   getCards,
   getCard,
@@ -21,10 +22,10 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/my-cards", async (req, res) => {
+router.get("/my-cards", auth, async (req, res) => {
   try {
-    const userId = req.query.userId;
-    const cards = userId ? await getMyCards(userId) : await getCards();
+    const userId = req.user?.isGuest ? req.query.userId : req.user._id;
+    const cards = userId ? await getMyCards(userId) : [];
     return res.send(cards);
   } catch (error) {
     return handleError(res, error.status || 500, error.message, req);
@@ -42,7 +43,7 @@ router.get("/:id", async (req, res) => {
 });
 
 /* יצירת כרטיס */
-router.post("/", async (req, res) => {
+router.post("/", auth, requireBusiness, async (req, res) => {
   try {
     const card = await createCard(req.body);
     return res.status(201).send(card);
@@ -51,7 +52,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, requireAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const card = await updateCard(id, req.body);
@@ -61,10 +62,10 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-router.patch("/:id", async (req, res) => {
+router.patch("/:id", auth, requireBusiness, async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.body.userId || req.query.userId || "guest";
+    const userId = req.user._id;
     const card = await likeCard(id, userId);
     return res.send(card);
   } catch (error) {
@@ -72,7 +73,7 @@ router.patch("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, requireAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const card = await deleteCard(id);
