@@ -1,9 +1,10 @@
 # MP-BusinessCards-Pro
 
-**Business Cards Management System** — אפליקציית ניהול כרטיסי ביקור דיגיטליים (Node.js, Express, MongoDB, JWT).
+**Business Cards Management System** — אפליקציית ניהול כרטיסי ביקור דיגיטליים (Node.js 18, Express, MongoDB, JWT).
 
-- **אתר:** `http://localhost:8181` · **API:** `http://localhost:8181/api`
+- **אתר:** `http://localhost:8181` · **API:** `http://localhost:8181/users`, `http://localhost:8181/cards`
 - העתק [`.env.example`](.env.example) ל-`.env.development` או `.env.production` והגדר משתני סביבה.
+- מוכן להעלאה ל-GitHub: קבצי `.env*`, `node_modules/` ו-`logs/` חסומים ב-[`.gitignore`](.gitignore).
 
 רישיון: [LICENSE](LICENSE).
 
@@ -43,7 +44,7 @@
 ## 🚀 **התקנה והפעלה**
 
 ### **דרישות מערכת:**
-- Node.js (v14+)
+- Node.js 18.x
 - MongoDB (Local או Atlas)
 - npm או yarn
 
@@ -61,13 +62,21 @@ npm start
 
 ### **גישה לאתר (פיתוח):**
 - **Frontend:** http://localhost:8181
-- **API:** http://localhost:8181/api
+- **API:** http://localhost:8181/users ו-http://localhost:8181/cards
+- **Health check:** http://localhost:8181/health
 
 ### **מצב פיתוח (`nodemon`):**
 ```bash
 npm run dev
 ```
 (הסקריפטים ב-`package.json` מותאמים ל-Windows עם `set NODE_ENV=...`.)
+
+### **בדיקת תקינות לפני Push ל-GitHub**
+```bash
+npm install
+npm run build
+```
+`npm run build` מבצע בדיקת תחביר בסיסית לקבצי הכניסה של השרת.
 
 ### **משתני סביבה (אבטחה)**
 - **לא לעשות commit** לקבצי `.env*` — הם ב-[`.gitignore`](.gitignore). רק [`.env.example`](.env.example) ב-Git כתבנית.
@@ -301,18 +310,20 @@ npm run dev
 
 ## 🧪 **בדיקות ואימות**
 
-### **מה נבדק:**
-- ✅ כל ה-API endpoints עובדים
-- ✅ Authentication ו-Authorization
-- ✅ CRUD operations מלאות
-- ✅ Validation של קלטים
-- ✅ Responsive design
-- ✅ Error handling
-- ✅ Security measures
+### **בדיקות זמינות כרגע:**
+- `npm run build` — בדיקת תחביר ל-`server.js` ול-`api/index.js`
+- `GET /health` — בדיקת זמינות בסיסית של השרת
+
+### **בדיקות ידניות מומלצות לפני Deploy:**
+- התחברות והרשאות משתמשים
+- פעולות CRUD לכרטיסים
+- Validation של קלטים
+- Responsive design
+- Error handling
 
 ### **סביבות בדיקה:**
 - **Development:** MongoDB Local
-- **Production:** MongoDB Atlas (מוכן)
+- **Production:** MongoDB Atlas
 
 ---
 

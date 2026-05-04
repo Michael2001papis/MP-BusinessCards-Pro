@@ -33,5 +33,9 @@ coverage/
 # IDE
 .idea/
 .vscode/
+.cursor/
 *.swp
 *.swo
+
+# Deployment metadata
+.vercel/
