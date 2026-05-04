@@ -127,6 +127,10 @@
 
       function renderCards(cards){
         if (!Array.isArray(cards)) { cardsGrid.innerHTML = '<div class="note">אין נתונים</div>'; return; }
+        if (cards.length === 0) {
+          cardsGrid.innerHTML = '<div class="note">אין כרטיסים זמינים כרגע. ייתכן שמסד הנתונים אינו מחובר.</div>';
+          return;
+        }
         cardsGrid.innerHTML = cards.map(c => `
           <div class="card">
             <div class="badge badge-primary">#${c.bizNumber ?? '—'}</div>

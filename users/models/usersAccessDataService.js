@@ -5,9 +5,17 @@ const User = require("./mongodb/User");
 const lodash = require("lodash");
 const { handleBadRequest } = require("../../utils/errorHandler");
 const { comparePassword } = require("../helpers/bcrypt");
+const { isDatabaseConnected } = require("../../DB/dbService");
+
+const dbUnavailable = () => {
+  const error = new Error("Database is currently unavailable");
+  error.status = 503;
+  return error;
+};
 
 const createUser = async (normalizedUser) => {
   if (DB === "MONGODB") {
+    if (!isDatabaseConnected()) return Promise.reject(dbUnavailable());
     try {
       const { email } = normalizedUser;
       let user = await User.findOne({ email });
@@ -28,6 +36,7 @@ const createUser = async (normalizedUser) => {
 
 const login = async ({ email, password }) => {
   if (DB === "MONGODB") {
+    if (!isDatabaseConnected()) return Promise.reject(dbUnavailable());
     try {
       const user = await User.findOne({ email });
       if (!user) throw new Error("Authentication Error: Invalid email");
@@ -49,6 +58,7 @@ const login = async ({ email, password }) => {
 
 const findUsers = async () => {
   if (DB === "MONGODB") {
+    if (!isDatabaseConnected()) return Promise.resolve([]);
     try {
       const users = await User.find({}, { password: 0, __v: 0 });
       return Promise.resolve(users);
@@ -62,6 +72,7 @@ const findUsers = async () => {
 
 const findUser = async (userId) => {
   if (DB === "MONGODB") {
+    if (!isDatabaseConnected()) return Promise.resolve(null);
     try {
       let user = await User.findById(userId, {
         password: 0,
@@ -79,6 +90,7 @@ const findUser = async (userId) => {
 
 const update = async (userId, normalizedUser) => {
   if (DB === "MONGODB") {
+    if (!isDatabaseConnected()) return Promise.reject(dbUnavailable());
     try {
       let user = await User.findByIdAndUpdate(userId, normalizedUser, {
         new: true,
@@ -99,6 +111,7 @@ const update = async (userId, normalizedUser) => {
 
 const removeUser = async (userId) => {
   if (DB === "MONGODB") {
+    if (!isDatabaseConnected()) return Promise.reject(dbUnavailable());
     try {
       let user = await User.findById(userId);
       

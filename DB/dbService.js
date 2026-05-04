@@ -31,5 +31,8 @@ const getDatabaseHealth = () => {
   };
 };
 
+const isDatabaseConnected = () => mongoose.connection.readyState === 1;
+
 module.exports = connectToDb;
 module.exports.getDatabaseHealth = getDatabaseHealth;
+module.exports.isDatabaseConnected = isDatabaseConnected;

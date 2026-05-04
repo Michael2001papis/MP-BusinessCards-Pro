@@ -1,5 +1,6 @@
 // Copyright (c) 2026 מיכאל פפיסמדוב MP זכויות יוצרים
 const mongoose = require("mongoose");
+mongoose.set("bufferCommands", false);
 const Address = require("./Address");
 const Image = require("./Image");
 const Name = require("./Name");

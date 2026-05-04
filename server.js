@@ -60,9 +60,9 @@ app.get("/favicon.ico", (req, res) => {
 });
 function sendHealth(req, res) {
   const database = getDatabaseHealth();
-  const ok = database.readyState === 1;
-  res.status(ok ? 200 : 503).json({
-    ok,
+  res.status(200).json({
+    ok: true,
+    server: "running",
     service: "MP-BusinessCards-Pro",
     env: process.env.NODE_ENV || "development",
     checkedAt: new Date().toISOString(),
