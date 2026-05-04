@@ -50,9 +50,9 @@
           <div style="margin-top: 1.5rem">
             <div class="note" style="margin-bottom: 0.75rem">או התחבר עם</div>
             <div class="btn-group">
-              <button class="btn btn-danger" id="googleBtn" type="button">Google</button>
+              <button class="btn btn-danger" id="googleBtn" type="button" disabled>Google</button>
             </div>
-            <div class="note">כפתור זה מפנה ל־/auth/google (ניתן לממש OAuth מאוחר יותר)</div>
+            <div class="note">OAuth עם Google עדיין לא פעיל בפרויקט.</div>
           </div>
         </section>
 
@@ -167,11 +167,14 @@
         claims.textContent = p ? JSON.stringify(p,null,2) : '(אין נתונים)'; 
       }
 
+      const API_BASE = '/api';
+
       async function apiFetch(path, options={}){
         const headers = Object.assign({'Content-Type':'application/json'}, options.headers||{});
         const t = getToken();
         if (t) headers['Authorization'] = 'Bearer ' + t;
-        const res = await fetch(path, Object.assign({}, options, { headers }));
+        const apiPath = path.startsWith(API_BASE) ? path : `${API_BASE}${path}`;
+        const res = await fetch(apiPath, Object.assign({}, options, { headers }));
         return res;
       }
 
@@ -193,7 +196,7 @@
           const username = document.getElementById('username').value.trim();
           const email = username.includes('@') ? username : (usernameToEmail[username.toLowerCase()] || `${username}@gmail.com`);
           const password = document.getElementById('password').value;
-          const res = await apiFetch('/users/login', {
+          const res = await apiFetch('/api/users/login', {
             method: 'POST',
             body: JSON.stringify({ email, password })
           });
@@ -210,10 +213,10 @@
 
       logoutBtn.addEventListener('click', () => { clearToken(); });
 
-      // התחברות עם Google (הכנה ל-OAuth)
+      // התחברות עם Google תופעל רק אחרי הוספת OAuth בצד השרת.
       const googleBtn = document.getElementById('googleBtn');
       googleBtn?.addEventListener('click', () => {
-        window.location.href = '/auth/google';
+        err.textContent = 'OAuth עם Google עדיין לא מוגדר.';
       });
 
       function renderCards(cards){
@@ -232,7 +235,7 @@
         cardsErr.textContent = '';
         cardsGrid.innerHTML = '<div class="loading">טוען כרטיסים...</div>';
         try {
-          const res = await apiFetch('/cards');
+          const res = await apiFetch('/api/cards');
           const text = await res.text();
           if (!res.ok) { cardsErr.textContent = `שגיאה ${res.status}: ${text}`; return; }
           try { renderCards(JSON.parse(text)); } catch { cardsGrid.innerHTML = `<div class="claims-display">${text}</div>`; }

@@ -16,7 +16,7 @@ router.get("/", auth, async (req, res) => {
   try {
     const { isAdmin } = req.user;
     if (!isAdmin) {
-      handleError(res, 403, "Authorization Error: Must be admin!", req);
+      return handleError(res, 403, "Authorization Error: Must be admin!", req);
     }
     const users = await getUsers();
     return res.send(users);
@@ -30,7 +30,7 @@ router.get("/:id", auth, async (req, res) => {
     const id = req.params.id;
     const { _id, isAdmin } = req.user;
     if (_id !== id && !isAdmin) {
-      handleError(
+      return handleError(
         res,
         403,
         "Authorization Error: Must be admin or THE registered user!",
@@ -88,9 +88,18 @@ router.patch("/:id", (req, res) => {
   res.send(`Patch from Users with id: ${id}`);
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
   try {
     const { id } = req.params;
+    const { _id, isAdmin } = req.user;
+    if (_id !== id && !isAdmin) {
+      return handleError(
+        res,
+        403,
+        "Authorization Error: Must be admin or the same user",
+        req
+      );
+    }
     const user = await deleteUser(id);
     return res.send(user);
   } catch (error) {

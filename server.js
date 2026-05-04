@@ -43,6 +43,8 @@ const router = require("./router/router");
 const morganLogger = require("./logger/loggers/morganLogger");
 const { handleError } = require("./utils/errorHandler");
 const connectToDb = require("./DB/dbService");
+const { getDatabaseHealth } = require("./DB/dbService");
+const { validateRuntimeEnv } = require("./utils/validateEnv");
 const config = require("config");
 
 const {
@@ -50,14 +52,30 @@ const {
   generateInitialUsers,
 } = require("./initialData/initialDataService");
 
+validateRuntimeEnv();
+
 // Middleware — cors/morgan ישירות על app
 app.use(cors({ origin: true, optionsSuccessStatus: 200 }));
 app.use(morganLogger);
 app.get("/favicon.ico", (req, res) => {
   res.redirect(302, "/favicon.svg");
 });
+function sendHealth(req, res) {
+  const database = getDatabaseHealth();
+  const ok = database.readyState === 1;
+  res.status(ok ? 200 : 503).json({
+    ok,
+    service: "MP-BusinessCards-Pro",
+    env: process.env.NODE_ENV || "development",
+    checkedAt: new Date().toISOString(),
+    database,
+  });
+}
+
+app.get("/api/health", sendHealth);
+// Legacy compatibility only; the documented API health route is /api/health.
 app.get("/health", (req, res) => {
-  res.status(200).json({ ok: true, env: process.env.NODE_ENV || "development" });
+  res.redirect(308, "/api/health");
 });
 app.use(express.json());
 app.use(express.text());
@@ -65,7 +83,7 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 app.use(express.static(path.join(__dirname, "public")));
-app.use(router);
+app.use("/api", router);
 
 // Middleware לטיפול בשגיאות
 app.use((err, req, res, next) => {

@@ -2,7 +2,7 @@
 
 **Business Cards Management System** — אפליקציית ניהול כרטיסי ביקור דיגיטליים (Node.js 18, Express, MongoDB, JWT).
 
-- **אתר:** `http://localhost:8181` · **API:** `http://localhost:8181/users`, `http://localhost:8181/cards`
+- **אתר:** `http://localhost:8181` · **API:** `http://localhost:8181/api/users`, `http://localhost:8181/api/cards`
 - העתק [`.env.example`](.env.example) ל-`.env.development` או `.env.production` והגדר משתני סביבה.
 - מוכן להעלאה ל-GitHub: קבצי `.env*`, `node_modules/` ו-`logs/` חסומים ב-[`.gitignore`](.gitignore).
 
@@ -54,16 +54,22 @@
 npm install
 ```
 
-### **הפעלה:**
+### **הפעלה מקומית:**
 ```bash
-# הפעלת השרת
+# אחרי יצירת .env.development
+npm run dev
+```
+
+### **הפעלת Production:**
+```bash
+# אחרי הגדרת משתני Production / Vercel
 npm start
 ```
 
 ### **גישה לאתר (פיתוח):**
 - **Frontend:** http://localhost:8181
-- **API:** http://localhost:8181/users ו-http://localhost:8181/cards
-- **Health check:** http://localhost:8181/health
+- **API:** http://localhost:8181/api/users ו-http://localhost:8181/api/cards
+- **Health check:** http://localhost:8181/api/health
 
 ### **מצב פיתוח (`nodemon`):**
 ```bash
@@ -76,12 +82,13 @@ npm run dev
 npm install
 npm run build
 ```
-`npm run build` מבצע בדיקת תחביר בסיסית לקבצי הכניסה של השרת.
+`npm run build` בודק תחביר בכל קבצי JavaScript, `require` יחסיים, וקישורים פנימיים/קריאות API מה-Frontend.
 
 ### **משתני סביבה (אבטחה)**
 - **לא לעשות commit** לקבצי `.env*` — הם ב-[`.gitignore`](.gitignore). רק [`.env.example`](.env.example) ב-Git כתבנית.
 - בעת עליית השרת נטען אוטומטית `dotenv` מקובץ **`.env.development`** או **`.env.production`** לפי `NODE_ENV` (אם הקובץ קיים).
 - ערכים רגישים מגיעים מ-**משתני סביבה** (מערכת ההפעלה, Vercel, או `.env` מקומי) וממופים ב-[`config/custom-environment-variables.json`](config/custom-environment-variables.json).
+- השרת מבצע בדיקת ENV בתחילת הריצה. אם חסר `JWT_KEY`/`JWT_SECRET`, `PORT`, `DB`, או חיבור Atlas בפרודקשן — ההרצה נעצרת עם הודעת שגיאה ברורה.
 - **חיבור ל-MongoDB Atlas** — אחת מהאפשרויות:
   - **`MONGODB_URI`** — מחרוזת `mongodb+srv://...` מלאה (מומלץ ל-Vercel).
   - או **`DB_NAME`**, **`DB_PASSWORD`**, **`MONGODB_CLUSTER_HOST`** (שם ה-host של הקלאסטר ב-Atlas, בלי `mongodb+srv://`).
@@ -200,23 +207,30 @@ npm run build
 
 ## 🚀 **API Endpoints**
 
+כל נתיבי ה-API משתמשים ב-prefix אחיד: `/api`.
+
+### **System Health:**
+- `GET /api/health` - מצב שרת, סביבת עבודה, זמן בדיקה ומצב חיבור MongoDB
+
 ### **Authentication:**
-- `POST /users/login` - התחברות משתמש
-- `POST /users/register` - רישום משתמש חדש
+- `POST /api/users/login` - התחברות משתמש
+- `POST /api/users` - רישום משתמש חדש
 
 ### **Users Management:**
-- `GET /users` - קבלת רשימת משתמשים (Admin)
-- `GET /users/:id` - קבלת משתמש ספציפי
-- `PATCH /users/:id` - עדכון משתמש
-- `DELETE /users/:id` - מחיקת משתמש
+- `GET /api/users` - קבלת רשימת משתמשים (Admin)
+- `GET /api/users/:id` - קבלת משתמש ספציפי
+- `PUT /api/users/:id` - עדכון משתמש
+- `PATCH /api/users/:id` - עדכון חלקי/בדיקה קיימת
+- `DELETE /api/users/:id` - מחיקת משתמש
 
 ### **Cards Management:**
-- `GET /cards` - קבלת רשימת כרטיסים
-- `GET /cards/:id` - קבלת כרטיס ספציפי
-- `POST /cards` - יצירת כרטיס חדש (Business/Admin)
-- `PUT /cards/:id` - עדכון כרטיס מלא
-- `PATCH /cards/:id` - עדכון כרטיס חלקי
-- `DELETE /cards/:id` - מחיקת כרטיס
+- `GET /api/cards` - קבלת רשימת כרטיסים
+- `GET /api/cards/my-cards` - קבלת כרטיסי המשתמש המחובר
+- `GET /api/cards/:id` - קבלת כרטיס ספציפי
+- `POST /api/cards` - יצירת כרטיס חדש (Business/Admin)
+- `PUT /api/cards/:id` - עדכון כרטיס מלא
+- `PATCH /api/cards/:id` - לייק/עדכון חלקי לכרטיס
+- `DELETE /api/cards/:id` - מחיקת כרטיס
 
 ---
 
@@ -311,8 +325,8 @@ npm run build
 ## 🧪 **בדיקות ואימות**
 
 ### **בדיקות זמינות כרגע:**
-- `npm run build` — בדיקת תחביר ל-`server.js` ול-`api/index.js`
-- `GET /health` — בדיקת זמינות בסיסית של השרת
+- `npm run build` — בדיקת תחביר לכל קבצי JavaScript, `require` יחסיים וקישורי Frontend פנימיים
+- `GET /api/health` — בדיקת זמינות עם מצב שרת, סביבת עבודה, זמן בדיקה ומצב חיבור MongoDB
 
 ### **בדיקות ידניות מומלצות לפני Deploy:**
 - התחברות והרשאות משתמשים

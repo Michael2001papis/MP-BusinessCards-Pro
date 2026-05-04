@@ -51,7 +51,7 @@ exports.requireBusiness = (req, res, next) => {
 
 /**
  * Middleware הגבלת אזור לפי allowedRegions של המשתמש
- * שימוש: router.get('/cards', auth, limitRegion('ישראל'), handler)
+ * שימוש: router.get('/api/cards', auth, limitRegion('ישראל'), handler)
  */
 exports.limitRegion = (region) => (req, res, next) => {
   const regions = req.user?.allowedRegions || [];

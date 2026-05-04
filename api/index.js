@@ -15,7 +15,9 @@ try {
   const htmlPath = path.join(__dirname, "..", "index.html");
   fallback.use((req, res) => {
     try {
-      if (fs.existsSync(htmlPath)) {
+      const acceptsHtml = req.method === "GET" && req.accepts("html");
+      const isApiRequest = req.originalUrl && req.originalUrl.startsWith("/api");
+      if (acceptsHtml && !isApiRequest && fs.existsSync(htmlPath)) {
         return res
           .status(200)
           .type("html")

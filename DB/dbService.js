@@ -1,5 +1,6 @@
 // DB/dbService.js
 const config = require("config");
+const mongoose = require("mongoose");
 const ENV = config.get("NODE_ENV");
 
 const connectToDb = () => {
@@ -11,4 +12,23 @@ const connectToDb = () => {
   }
 };
 
+const READY_STATE_LABELS = {
+  0: "disconnected",
+  1: "connected",
+  2: "connecting",
+  3: "disconnecting",
+  99: "uninitialized",
+};
+
+const getDatabaseHealth = () => {
+  const readyState = mongoose.connection.readyState;
+  return {
+    readyState,
+    status: READY_STATE_LABELS[readyState] || "unknown",
+    host: mongoose.connection.host || null,
+    name: mongoose.connection.name || null,
+  };
+};
+
 module.exports = connectToDb;
+module.exports.getDatabaseHealth = getDatabaseHealth;
