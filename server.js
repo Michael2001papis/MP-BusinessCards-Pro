@@ -45,15 +45,12 @@ const morganLogger = require("./logger/loggers/morganLogger");
 const { handleError } = require("./utils/errorHandler");
 const connectToDb = require("./DB/dbService");
 const { getDatabaseHealth } = require("./DB/dbService");
-const { validateRuntimeEnv } = require("./utils/validateEnv");
 const config = require("config");
 
 const {
   generateInitialCards,
   generateInitialUsers,
 } = require("./initialData/initialDataService");
-
-validateRuntimeEnv();
 
 // Middleware — cors/morgan ישירות על app
 app.use(cors({ origin: true, optionsSuccessStatus: 200 }));

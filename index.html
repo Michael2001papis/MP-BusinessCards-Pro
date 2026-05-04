@@ -70,9 +70,7 @@
     </div>
 
     <script>
-      const tokenKey = 'bc_token';
       const form = document.getElementById('loginForm');
-      const out = document.getElementById('tokenBox');
       const err = document.getElementById('err');
       const btn = document.getElementById('submitBtn');
       const usernameToEmail = { 
@@ -82,112 +80,20 @@
         admin: 'admin@gmail.com'
       };
       const logoutBtn = document.getElementById('logoutBtn');
-      const copyBtn = document.getElementById('copyBtn');
-      const claims = document.getElementById('claims');
 
       const loadBtn = document.getElementById('loadCards');
       const clearBtn = document.getElementById('clearCards');
       const cardsGrid = document.getElementById('cardsGrid');
       const cardsErr = document.getElementById('cardsErr');
 
-      function saveToken(t){ 
-        localStorage.setItem(tokenKey, t); 
-        document.body.classList.add('auth');
-        addTokenSections();
-        updateTokenDisplay(t);
-      }
-      function getToken(){ return localStorage.getItem(tokenKey) || ''; }
-      function clearToken(){ 
-        localStorage.removeItem(tokenKey); 
-        document.body.classList.remove('auth');
-        removeTokenSections();
-      }
-      
-      // הוספת קטעי הטוקן אחרי התחברות
-      function addTokenSections() {
-        if (document.getElementById('tokenBox')) return; // כבר קיים
-        
-        const googleSection = document.querySelector('.btn-group');
-        const parentDiv = googleSection.parentElement;
-        
-        // הוספת קטע טוקן
-        const tokenHTML = `
-          <h3>טוקן</h3>
-          <div class="token-display">
-            <input id="tokenBox" class="token-input" readonly placeholder="(לא מחובר)" />
-            <button class="btn btn-secondary" id="copyBtn" type="button">העתק</button>
-          </div>
-        `;
-        
-        // הוספת קטע פענוח טוקן
-        const claimsHTML = `
-          <div style="margin-top: 1.5rem">
-            <h3>פענוח טוקן</h3>
-            <div id="claims" class="claims-display">(אין נתונים)</div>
-          </div>
-        `;
-        
-        parentDiv.insertAdjacentHTML('beforeend', tokenHTML);
-        parentDiv.insertAdjacentHTML('beforeend', claimsHTML);
-        
-        // הוספת event listeners
-        document.getElementById('copyBtn')?.addEventListener('click', async () => {
-          try{ 
-            await navigator.clipboard.writeText(getToken()||''); 
-            document.getElementById('copyBtn').textContent='הועתק!'; 
-            setTimeout(()=>document.getElementById('copyBtn').textContent='העתק',1200);
-          }catch{}
-        });
-      }
-      
-      // הסרת קטעי הטוקן
-      function removeTokenSections() {
-        const tokenBox = document.getElementById('tokenBox');
-        const claims = document.getElementById('claims');
-        if (tokenBox) {
-          tokenBox.closest('div').previousElementSibling.remove(); // הסרת h3
-          tokenBox.closest('.token-display').remove();
-        }
-        if (claims) {
-          claims.closest('div').previousElementSibling.remove(); // הסרת h3
-          claims.closest('div').remove();
-        }
-      }
-      
-      // עדכון תצוגת הטוקן
-      function updateTokenDisplay(token) {
-        const out = document.getElementById('tokenBox');
-        if (out) out.value = token || '';
-        renderClaims(token); // תמיד נקרא - הפונקציה בודקת אם claims קיים
-      }
-      function decodeJwtPayload(token){ try{ const p = token.split('.')[1]; return JSON.parse(atob(p)); }catch{ return null; } }
-      function renderClaims(token){ 
-        const claims = document.getElementById('claims');
-        if (!claims) return;
-        const p = decodeJwtPayload(token||''); 
-        claims.textContent = p ? JSON.stringify(p,null,2) : '(אין נתונים)'; 
-      }
-
       const API_BASE = '/api';
 
       async function apiFetch(path, options={}){
         const headers = Object.assign({'Content-Type':'application/json'}, options.headers||{});
-        const t = getToken();
-        if (t) headers['Authorization'] = 'Bearer ' + t;
         const apiPath = path.startsWith(API_BASE) ? path : `${API_BASE}${path}`;
         const res = await fetch(apiPath, Object.assign({}, options, { headers }));
         return res;
       }
-
-      // init
-      (function init(){ 
-        const t = getToken(); 
-        if (t){ 
-          document.body.classList.add('auth');
-          addTokenSections();
-          updateTokenDisplay(t);
-        } 
-      })();
 
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -203,8 +109,7 @@
           });
           const text = await res.text();
           if (!res.ok) { err.textContent = `שגיאה ${res.status}: ${text}`; return; }
-          // ה־API מחזיר מחרוזת טוקן, לא JSON
-          saveToken(text.replace(/\"/g,'').replace(/^"|"$/g,''));
+          err.textContent = 'המשתמש נמצא והכניסה נבדקה בהצלחה.';
         } catch (ex) {
           err.textContent = ex.message || 'שגיאת רשת';
         } finally {
@@ -212,7 +117,7 @@
         }
       });
 
-      logoutBtn.addEventListener('click', () => { clearToken(); });
+      logoutBtn.addEventListener('click', () => { err.textContent = 'אין מערכת התחברות פעילה כרגע.'; });
 
       // התחברות עם Google תופעל רק אחרי הוספת OAuth בצד השרת.
       const googleBtn = document.getElementById('googleBtn');

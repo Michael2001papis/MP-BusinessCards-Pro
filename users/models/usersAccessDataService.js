@@ -5,7 +5,6 @@ const User = require("./mongodb/User");
 const lodash = require("lodash");
 const { handleBadRequest } = require("../../utils/errorHandler");
 const { comparePassword } = require("../helpers/bcrypt");
-const { generateAuthToken } = require("../../auth/Providers/jwt");
 
 const createUser = async (normalizedUser) => {
   if (DB === "MONGODB") {
@@ -37,8 +36,9 @@ const login = async ({ email, password }) => {
       if (!validPassword)
         throw new Error("Authentication Error: Invalid Password");
 
-      const token = generateAuthToken(user);
-      return Promise.resolve(token);
+      return Promise.resolve(
+        lodash.pick(user, ["name", "email", "_id", "isAdmin", "isBusiness"])
+      );
     } catch (error) {
       if (error.status == null) error.status = 400;
       return Promise.reject(error);

@@ -1,7 +1,6 @@
 // Copyright (c) 2026 מיכאל פפיסמדוב MP זכויות יוצרים
 const express = require("express");
 const { handleError } = require("../../utils/errorHandler");
-const { auth, requireAdmin, requireBusiness, limitRegion } = require("../../auth/authService");
 const {
   getCards,
   getCard,
@@ -13,8 +12,7 @@ const {
 } = require("../services/cardService");
 const router = express.Router();
 
-// דוגמה להגבלת אזור: כאן נדרוש התחברות ונגביל לאזור 'ישראל' (אדמין עוקף)
-router.get("/", auth, limitRegion("ישראל"), async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const cards = await getCards();
     return res.send(cards);
@@ -23,12 +21,11 @@ router.get("/", auth, limitRegion("ישראל"), async (req, res) => {
   }
 });
 
-// כרטיסי משתמש מחייבים התחברות
-router.get("/my-cards", auth, async (req, res) => {
+router.get("/my-cards", async (req, res) => {
   try {
-    const userId = req.user._id;
-    const card = await getMyCards(userId);
-    return res.send(card);
+    const userId = req.query.userId;
+    const cards = userId ? await getMyCards(userId) : await getCards();
+    return res.send(cards);
   } catch (error) {
     return handleError(res, error.status || 500, error.message, req);
   }
@@ -45,8 +42,7 @@ router.get("/:id", async (req, res) => {
 });
 
 /* יצירת כרטיס */
-// יצירת כרטיס: משתמש עסקי או אדמין בלבד
-router.post("/", auth, requireBusiness, async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const card = await createCard(req.body);
     return res.status(201).send(card);
@@ -55,9 +51,7 @@ router.post("/", auth, requireBusiness, async (req, res) => {
   }
 });
 
-// עריכת כרטיס: כאן ניתן להרחיב לבדיקה ש"יוצר הכרטיס" או אדמין בלבד
-// עריכת כרטיס: אדמין בלבד
-router.put("/:id", auth, requireAdmin, async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const card = await updateCard(id, req.body);
@@ -67,12 +61,10 @@ router.put("/:id", auth, requireAdmin, async (req, res) => {
   }
 });
 
-// לייק לכרטיס: משתמש רשום
-// לייק לכרטיס: משתמש עסקי (או אדמין)
-router.patch("/:id", auth, requireBusiness, async (req, res) => {
+router.patch("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user._id;
+    const userId = req.body.userId || req.query.userId || "guest";
     const card = await likeCard(id, userId);
     return res.send(card);
   } catch (error) {
@@ -80,12 +72,10 @@ router.patch("/:id", auth, requireBusiness, async (req, res) => {
   }
 });
 
-// מחיקת כרטיס: יוצר הכרטיס או אדמין (האכיפה נעשית בשכבת הדאטה כבר)
-router.delete("/:id", auth, async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const user = req.user;
-    const card = await deleteCard(id, user);
+    const card = await deleteCard(id);
     return res.send(card);
   } catch (error) {
     return handleError(res, error.status || 500, error.message, req);

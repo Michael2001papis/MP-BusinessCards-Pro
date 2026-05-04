@@ -11,14 +11,9 @@ const {
   deleteUser,
   loginUser,
 } = require("../services/usersService");
-const { auth } = require("../../auth/authService");
 
-router.get("/", auth, async (req, res) => {
+router.get("/", async (req, res) => {
   try {
-    const { isAdmin } = req.user;
-    if (!isAdmin) {
-      return handleError(res, 403, "Authorization Error: Must be admin!", req);
-    }
     const users = await getUsers();
     return res.send(users);
   } catch (error) {
@@ -26,19 +21,9 @@ router.get("/", auth, async (req, res) => {
   }
 });
 
-router.get("/:id", auth, async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const id = req.params.id;
-    const { _id, isAdmin } = req.user;
-    if (_id !== id && !isAdmin) {
-      return handleError(
-        res,
-        403,
-        "Authorization Error: Must be admin or THE registered user!",
-        req
-      );
-    }
-
     const user = await getUser(id);
     return res.send(user);
   } catch (error) {
@@ -64,19 +49,9 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// שינוי פרופיל/סיסמה: רק המשתמש עצמו (או אדמין) יכול לעדכן
-router.put("/:id", auth, async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const { _id, isAdmin } = req.user;
-    if (_id !== id && !isAdmin) {
-      return handleError(
-        res,
-        403,
-        "Authorization Error: Must be admin or the same user",
-        req
-      );
-    }
     const user = await updateUser(id, req.body);
     return res.send(user);
   } catch (error) {
@@ -89,18 +64,9 @@ router.patch("/:id", (req, res) => {
   res.send(`Patch from Users with id: ${id}`);
 });
 
-router.delete("/:id", auth, async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const { _id, isAdmin } = req.user;
-    if (_id !== id && !isAdmin) {
-      return handleError(
-        res,
-        403,
-        "Authorization Error: Must be admin or the same user",
-        req
-      );
-    }
     const user = await deleteUser(id);
     return res.send(user);
   } catch (error) {

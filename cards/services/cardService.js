@@ -73,9 +73,9 @@ const likeCard = async (cardId, userId) => {
   }
 };
 
-const deleteCard = async (cardId, user) => {
+const deleteCard = async (cardId) => {
   try {
-    const card = await remove(cardId, user);
+    const card = await remove(cardId);
     return Promise.resolve(card);
   } catch (error) {
     return Promise.reject(error);
