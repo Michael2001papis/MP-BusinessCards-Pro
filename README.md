@@ -1,10 +1,10 @@
 <!-- Copyright (c) 2026 מיכאל פפיסמדוב MP זכויות יוצרים 15:45 -->
 # MP-BusinessCards-Pro
 
-**Business Cards Management System** — אפליקציית ניהול כרטיסי ביקור דיגיטליים (Node.js 18, Express, MongoDB, JWT).
+**Business Cards Management System** — אפליקציית ניהול כרטיסי ביקור דיגיטליים (Node.js 22, Express, MongoDB, JWT).
 
 - **אתר:** `http://localhost:8181` · **API:** `http://localhost:8181/api/users`, `http://localhost:8181/api/cards`
-- העתק [`.env.example`](.env.example) ל-`.env.development` או `.env.production` והגדר משתני סביבה.
+- כרגע אין צורך ב-Atlas, בקובץ ENV או ב-Production DB. ברירת המחדל היא **Local Demo Mode**.
 - מוכן להעלאה ל-GitHub: קבצי `.env*`, `node_modules/` ו-`logs/` חסומים ב-[`.gitignore`](.gitignore).
 
 רישיון: [LICENSE](LICENSE).
@@ -45,8 +45,8 @@
 ## 🚀 **התקנה והפעלה**
 
 ### **דרישות מערכת:**
-- Node.js 18.x
-- MongoDB (Local או Atlas)
+- Node.js 22.x
+- אין צורך ב-MongoDB מקומי או Atlas להפעלה הנוכחית
 - npm או yarn
 
 ### **התקנה:**
@@ -57,17 +57,15 @@ npm install
 
 ### **הפעלה מקומית:**
 ```bash
-# אחרי יצירת .env.development
 npm run dev
 ```
 
-### **הפעלת Production:**
+### **הפעלה רגילה:**
 ```bash
-# אחרי הגדרת משתני Production / Vercel
 npm start
 ```
 
-### **גישה לאתר (פיתוח):**
+### **גישה לאתר:**
 - **Frontend:** http://localhost:8181
 - **API:** http://localhost:8181/api/users ו-http://localhost:8181/api/cards
 - **Health check:** http://localhost:8181/api/health
@@ -76,7 +74,7 @@ npm start
 ```bash
 npm run dev
 ```
-(הסקריפטים ב-`package.json` מותאמים ל-Windows עם `set NODE_ENV=...`.)
+(הסקריפטים רצים כברירת מחדל ב-Local Demo Mode, ללא `NODE_ENV` וללא קובץ ENV.)
 
 ### **בדיקת תקינות לפני Push ל-GitHub**
 ```bash
@@ -85,15 +83,13 @@ npm run build
 ```
 `npm run build` בודק תחביר בכל קבצי JavaScript, `require` יחסיים, וקישורים פנימיים/קריאות API מה-Frontend.
 
-### **משתני סביבה (אבטחה)**
-- **לא לעשות commit** לקבצי `.env*` — הם ב-[`.gitignore`](.gitignore). רק [`.env.example`](.env.example) ב-Git כתבנית.
-- בעת עליית השרת נטען אוטומטית `dotenv` מקובץ **`.env.development`** או **`.env.production`** לפי `NODE_ENV` (אם הקובץ קיים).
-- ערכים רגישים מגיעים מ-**משתני סביבה** (מערכת ההפעלה, Vercel, או `.env` מקומי) וממופים ב-[`config/custom-environment-variables.json`](config/custom-environment-variables.json).
-- השרת מבצע בדיקת ENV בתחילת הריצה. אם חסר `JWT_KEY`/`JWT_SECRET`, `PORT`, `DB`, או חיבור Atlas בפרודקשן — ההרצה נעצרת עם הודעת שגיאה ברורה.
-- **חיבור ל-MongoDB Atlas** — אחת מהאפשרויות:
-  - **`MONGODB_URI`** — מחרוזת `mongodb+srv://...` מלאה (מומלץ ל-Vercel).
-  - או **`DB_NAME`**, **`DB_PASSWORD`**, **`MONGODB_CLUSTER_HOST`** (שם ה-host של הקלאסטר ב-Atlas, בלי `mongodb+srv://`).
-- **סודות שהופיעו בעבר ב-Git / בקונפיג ישן:** מומלץ **לסובב** JWT, סיסמת Atlas וכל מפתח — גם אם הוסרו מהקבצים.
+### **מצב נתונים נוכחי**
+- כרגע האתר מיועד לרוץ ב-**Local Demo Mode** בלבד.
+- אין צורך ב-Atlas.
+- אין צורך בקובץ `.env`.
+- אין צורך ב-Production DB.
+- נתוני הדמו מגיעים מתוך `initialData/initialData.json` ונשמרים זמנית בזיכרון בזמן שהשרת רץ.
+- `GET /api/health` מציג את מצב הנתונים, כמות המשתמשים וכמות הכרטיסים הזמינים.
 
 ---
 
@@ -103,19 +99,7 @@ npm run build
 
 ### **לפני Deploy**
 1. חבר את ה-repository ל-Vercel (Import Project).
-2. ב-**Settings → Environment Variables** הגדר לפחות (לסביבת Production — ואם צריך גם Preview):
-
-| משתנה | הסבר |
-|--------|------|
-| `JWT_KEY` | מפתח חתימה ל-JWT (חובה בפרודקשן) |
-| `MONGODB_URI` | **מומלץ:** מחרוזת `mongodb+srv://USER:PASS@cluster...mongodb.net/` מלאה |
-| `DB_NAME` | משתמש Atlas (אם לא משתמשים ב-`MONGODB_URI`) |
-| `DB_PASSWORD` | סיסמת Atlas (אם לא משתמשים ב-`MONGODB_URI`) |
-| `MONGODB_CLUSTER_HOST` | לדוגמה `cluster0.xxxxx.mongodb.net` (אם לא משתמשים ב-`MONGODB_URI`) |
-| `NODE_ENV` | `production` (לרוב Vercel כבר מגדיר) |
-
-המפתחות נטענים דרך [`config/custom-environment-variables.json`](config/custom-environment-variables.json) ודורסים את ערכי ברירת המחדל ב-`config/` כשהם מוגדרים.
-
+2. אין צורך להגדיר Environment Variables עבור המצב הנוכחי.
 3. **Deploy** — אחרי push ל-`main`, Vercel יבנה מחדש.
 
 ### **למה הופיע 500 / FUNCTION_INVOCATION_FAILED לפני התיקון**
@@ -123,7 +107,7 @@ npm run build
 - כתיבה לתיקיית `logs/` בשרת Vercel נכשלת (מערכת קבצים read-only); ה-File Logger משתמש ב-`/tmp/logs` כש-`VERCEL` מוגדר.
 
 ### **מגבלות**
-- **Cold start** וחיבור ל-Atlas עלולים לקחת כמה שניות; בתוכנית חינם של Vercel יש מגבלת זמן לביצוע פונקציה — אם יש timeout, שקול תוכנית Pro או אופטימיזציה של חיבור MongoDB.
+- במצב Local Demo הנתונים נשמרים בזיכרון בלבד. בסביבת Serverless הם יכולים להתאפס בין הפעלות.
 
 ---
 
@@ -337,8 +321,7 @@ npm run build
 - Error handling
 
 ### **סביבות בדיקה:**
-- **Development:** MongoDB Local
-- **Production:** MongoDB Atlas
+- **Local Demo Mode:** מצב ברירת המחדל כרגע, ללא Atlas, ללא ENV וללא Production DB.
 
 ---
 

@@ -48,23 +48,25 @@
             <div class="note">טיפ: Michael(Mp123456) - Admin, Zura(Zp123456) - Business, Lika(Lp123456) - Regular, admin(Aa123456) - Admin</div>
             <div id="err" class="error"></div>
           </form>
-          <div style="margin-top: 1.5rem">
-            <div class="note" style="margin-bottom: 0.75rem">או התחבר עם</div>
-            <div class="btn-group">
-              <button class="btn btn-danger" id="googleBtn" type="button" disabled>Google</button>
-            </div>
-            <div class="note">OAuth עם Google עדיין לא פעיל בפרויקט.</div>
-          </div>
         </section>
 
         <section class="panel">
           <h2>כרטיסים</h2>
           <div class="btn-group">
             <button class="btn btn-primary" id="loadCards">טען כרטיסים</button>
+            <button class="btn btn-secondary" id="createCard">צור כרטיס דמו</button>
             <button class="btn btn-secondary" id="clearCards">נקה</button>
           </div>
           <div id="cardsErr" class="error"></div>
           <div id="cardsGrid" class="cards-grid"></div>
+        </section>
+
+        <section class="panel">
+          <h2>מצב מערכת</h2>
+          <div class="btn-group">
+            <button class="btn btn-secondary" id="refreshStatus" type="button">רענן מצב</button>
+          </div>
+          <div id="systemStatus" class="note" style="margin-top: 1rem">טוען מצב מערכת...</div>
         </section>
       </div>
     </div>
@@ -86,17 +88,43 @@
       const logoutBtn = document.getElementById('logoutBtn');
 
       const loadBtn = document.getElementById('loadCards');
+      const createCardBtn = document.getElementById('createCard');
       const clearBtn = document.getElementById('clearCards');
       const cardsGrid = document.getElementById('cardsGrid');
       const cardsErr = document.getElementById('cardsErr');
+      const refreshStatusBtn = document.getElementById('refreshStatus');
+      const systemStatus = document.getElementById('systemStatus');
 
       const API_BASE = '/api';
+      let authToken = localStorage.getItem('mpAuthToken') || '';
+      let currentUser = JSON.parse(localStorage.getItem('mpCurrentUser') || 'null');
 
       async function apiFetch(path, options={}){
         const headers = Object.assign({'Content-Type':'application/json'}, options.headers||{});
+        if (authToken) headers['x-auth-token'] = authToken;
         const apiPath = path.startsWith(API_BASE) ? path : `${API_BASE}${path}`;
         const res = await fetch(apiPath, Object.assign({}, options, { headers }));
         return res;
+      }
+
+      function friendlyError(status, text){
+        return text || `שגיאה ${status}. אם אין חיבור למסד, המערכת אמורה לעבוד במצב מקומי.`;
+      }
+
+      async function refreshStatus(){
+        try {
+          const res = await apiFetch('/api/health');
+          const data = await res.json();
+          systemStatus.innerHTML = `
+            <div>שרת: ${data.server === 'running' ? 'פעיל' : 'לא פעיל'}</div>
+            <div>מצב נתונים: ${data.dataMode || 'לא ידוע'}</div>
+            <div>משתמשים זמינים: ${data.usersCount ?? 'מחובר למסד'}</div>
+            <div>כרטיסים זמינים: ${data.cardsCount ?? 'מחובר למסד'}</div>
+            <div>${data.message || ''}</div>
+          `;
+        } catch (ex) {
+          systemStatus.textContent = ex.message || 'לא ניתן לבדוק מצב מערכת';
+        }
       }
 
       form.addEventListener('submit', async (e) => {
@@ -113,7 +141,12 @@
           });
           const text = await res.text();
           if (!res.ok) { err.textContent = `שגיאה ${res.status}: ${text}`; return; }
-          err.textContent = 'המשתמש נמצא והכניסה נבדקה בהצלחה.';
+          const user = JSON.parse(text);
+          authToken = user.token || '';
+          currentUser = user;
+          localStorage.setItem('mpAuthToken', authToken);
+          localStorage.setItem('mpCurrentUser', JSON.stringify(currentUser));
+          err.textContent = `התחברת בהצלחה: ${user.email}. המערכת מוכנה לפעולות דמו.`;
         } catch (ex) {
           err.textContent = ex.message || 'שגיאת רשת';
         } finally {
@@ -121,12 +154,12 @@
         }
       });
 
-      logoutBtn.addEventListener('click', () => { err.textContent = 'אין מערכת התחברות פעילה כרגע.'; });
-
-      // התחברות עם Google תופעל רק אחרי הוספת OAuth בצד השרת.
-      const googleBtn = document.getElementById('googleBtn');
-      googleBtn?.addEventListener('click', () => {
-        err.textContent = 'OAuth עם Google עדיין לא מוגדר.';
+      logoutBtn.addEventListener('click', () => {
+        authToken = '';
+        currentUser = null;
+        localStorage.removeItem('mpAuthToken');
+        localStorage.removeItem('mpCurrentUser');
+        err.textContent = 'התנתקת בהצלחה.';
       });
 
       function renderCards(cards){
@@ -141,23 +174,102 @@
             <h4>${(c.title||'ללא כותרת')}</h4>
             <div class="subtitle">${c.subtitle||''}</div>
             <div class="email">${c.email||''}</div>
+            <div class="note">${(c.likes || []).length} לייקים</div>
+            <div class="btn-group" style="margin-top: 1rem">
+              <button class="btn btn-secondary" data-action="like" data-id="${c._id}">לייק</button>
+              <button class="btn btn-secondary" data-action="edit" data-id="${c._id}">ערוך</button>
+              <button class="btn btn-danger" data-action="delete" data-id="${c._id}">מחק</button>
+            </div>
           </div>
         `).join('');
       }
 
-      loadBtn.addEventListener('click', async () => {
+      async function loadCards(){
         cardsErr.textContent = '';
         cardsGrid.innerHTML = '<div class="loading">טוען כרטיסים...</div>';
         try {
           const res = await apiFetch('/api/cards');
           const text = await res.text();
-          if (!res.ok) { cardsErr.textContent = `שגיאה ${res.status}: ${text}`; return; }
+          if (!res.ok) { cardsErr.textContent = friendlyError(res.status, text); return; }
           try { renderCards(JSON.parse(text)); } catch { cardsGrid.innerHTML = `<div class="claims-display">${text}</div>`; }
         } catch (ex) {
           cardsErr.textContent = ex.message || 'שגיאת רשת';
         }
+      }
+
+      loadBtn.addEventListener('click', loadCards);
+
+      createCardBtn.addEventListener('click', async () => {
+        cardsErr.textContent = '';
+        try {
+          const title = prompt('שם הכרטיס החדש:', 'כרטיס דמו חדש');
+          if (!title) return;
+          const body = {
+            title,
+            subtitle: 'כרטיס שנוצר במצב מקומי',
+            description: 'נתון דמו שנשמר זמנית בזיכרון השרת.',
+            phone: '050-1234567',
+            email: `demo${Date.now()}@gmail.com`,
+            web: 'https://www.test.co.il',
+            image: { url: '', alt: '' },
+            address: {
+              state: '',
+              country: 'ישראל',
+              city: 'חולון',
+              street: 'רחוב דמו',
+              houseNumber: 1,
+              zip: 0
+            },
+            user_id: currentUser?._id || ''
+          };
+          const res = await apiFetch('/api/cards', { method: 'POST', body: JSON.stringify(body) });
+          const text = await res.text();
+          if (!res.ok) { cardsErr.textContent = friendlyError(res.status, text); return; }
+          await loadCards();
+        } catch (ex) {
+          cardsErr.textContent = ex.message || 'שגיאת רשת';
+        }
       });
+
+      cardsGrid.addEventListener('click', async (event) => {
+        const button = event.target.closest('button[data-action]');
+        if (!button) return;
+        const { action, id } = button.dataset;
+        cardsErr.textContent = '';
+        try {
+          if (action === 'like') {
+            const res = await apiFetch(`/api/cards/${id}`, { method: 'PATCH', body: JSON.stringify({}) });
+            const text = await res.text();
+            if (!res.ok) { cardsErr.textContent = friendlyError(res.status, text); return; }
+          }
+          if (action === 'edit') {
+            const title = prompt('כותרת חדשה לכרטיס:', 'כרטיס דמו מעודכן');
+            if (!title) return;
+            const originalRes = await apiFetch(`/api/cards/${id}`);
+            const original = await originalRes.json();
+            const res = await apiFetch(`/api/cards/${id}`, {
+              method: 'PUT',
+              body: JSON.stringify({ ...original, title })
+            });
+            const text = await res.text();
+            if (!res.ok) { cardsErr.textContent = friendlyError(res.status, text); return; }
+          }
+          if (action === 'delete') {
+            if (!confirm('למחוק את הכרטיס?')) return;
+            const res = await apiFetch(`/api/cards/${id}`, { method: 'DELETE', body: JSON.stringify({}) });
+            const text = await res.text();
+            if (!res.ok) { cardsErr.textContent = friendlyError(res.status, text); return; }
+          }
+          await loadCards();
+          await refreshStatus();
+        } catch (ex) {
+          cardsErr.textContent = ex.message || 'שגיאת רשת';
+        }
+      });
+
       clearBtn.addEventListener('click', () => { cardsGrid.innerHTML = '<div class="note">(נוקה)</div>'; });
+      refreshStatusBtn.addEventListener('click', refreshStatus);
+      refreshStatus();
     </script>
   </body>
   </html>

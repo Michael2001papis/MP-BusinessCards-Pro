@@ -6,6 +6,7 @@ const lodash = require("lodash");
 const { handleBadRequest } = require("../../utils/errorHandler");
 const { comparePassword } = require("../helpers/bcrypt");
 const { isDatabaseConnected } = require("../../DB/dbService");
+const localDemoStore = require("../../utils/localDemoStore");
 
 const dbUnavailable = () => {
   const error = new Error("Database is currently unavailable");
@@ -15,7 +16,7 @@ const dbUnavailable = () => {
 
 const createUser = async (normalizedUser) => {
   if (DB === "MONGODB") {
-    if (!isDatabaseConnected()) return Promise.reject(dbUnavailable());
+    if (!isDatabaseConnected()) return localDemoStore.createUser(normalizedUser);
     try {
       const { email } = normalizedUser;
       let user = await User.findOne({ email });
@@ -36,7 +37,7 @@ const createUser = async (normalizedUser) => {
 
 const login = async ({ email, password }) => {
   if (DB === "MONGODB") {
-    if (!isDatabaseConnected()) return Promise.reject(dbUnavailable());
+    if (!isDatabaseConnected()) return localDemoStore.login({ email, password });
     try {
       const user = await User.findOne({ email });
       if (!user) throw new Error("Authentication Error: Invalid email");
@@ -58,7 +59,7 @@ const login = async ({ email, password }) => {
 
 const findUsers = async () => {
   if (DB === "MONGODB") {
-    if (!isDatabaseConnected()) return Promise.resolve([]);
+    if (!isDatabaseConnected()) return localDemoStore.findUsers();
     try {
       const users = await User.find({}, { password: 0, __v: 0 });
       return Promise.resolve(users);
@@ -72,7 +73,7 @@ const findUsers = async () => {
 
 const findUser = async (userId) => {
   if (DB === "MONGODB") {
-    if (!isDatabaseConnected()) return Promise.resolve(null);
+    if (!isDatabaseConnected()) return localDemoStore.findUser(userId);
     try {
       let user = await User.findById(userId, {
         password: 0,
@@ -90,7 +91,7 @@ const findUser = async (userId) => {
 
 const update = async (userId, normalizedUser) => {
   if (DB === "MONGODB") {
-    if (!isDatabaseConnected()) return Promise.reject(dbUnavailable());
+    if (!isDatabaseConnected()) return localDemoStore.updateUser(userId, normalizedUser);
     try {
       let user = await User.findByIdAndUpdate(userId, normalizedUser, {
         new: true,
@@ -111,7 +112,7 @@ const update = async (userId, normalizedUser) => {
 
 const removeUser = async (userId) => {
   if (DB === "MONGODB") {
-    if (!isDatabaseConnected()) return Promise.reject(dbUnavailable());
+    if (!isDatabaseConnected()) return localDemoStore.removeUser(userId);
     try {
       let user = await User.findById(userId);
       

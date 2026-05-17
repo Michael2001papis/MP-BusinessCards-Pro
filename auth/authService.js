@@ -53,7 +53,7 @@ exports.guestUser = guestUser;
  * Middleware בדיקת הרשאת אדמין בלבד
  */
 exports.requireAdmin = (req, res, next) => {
-  if (!req.user?.isAdmin) return handleError(res, 403, "Demo mode: admin action is disabled", req);
+  if (!req.user?.isAdmin) return handleError(res, 403, "יש להתחבר כמשתמש מנהל כדי לבצע פעולה זו.", req);
   next();
 };
 
@@ -62,7 +62,7 @@ exports.requireAdmin = (req, res, next) => {
  */
 exports.requireBusiness = (req, res, next) => {
   if (!req.user?.isBusiness && !req.user?.isAdmin)
-    return handleError(res, 403, "Demo mode: business action is disabled", req);
+    return handleError(res, 403, "יש להתחבר כמשתמש עסקי כדי לבצע פעולה זו.", req);
   next();
 };
 

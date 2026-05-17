@@ -3,8 +3,14 @@
 const config = require("config");
 const mongoose = require("mongoose");
 const ENV = config.get("NODE_ENV");
+const DATA_MODE = config.has("DATA_MODE") ? config.get("DATA_MODE") : "LOCAL_DEMO";
 
 const connectToDb = () => {
+  if (DATA_MODE === "LOCAL_DEMO") {
+    console.log("Local Demo Mode: המערכת רצה ללא Atlas, ללא ENV חיצוני וללא Production DB.");
+    return;
+  }
+
   if (ENV === "development") {
     require("./mongoDB/connectLocally");
   }

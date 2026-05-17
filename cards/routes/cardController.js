@@ -45,7 +45,7 @@ router.get("/:id", async (req, res) => {
 /* יצירת כרטיס */
 router.post("/", auth, requireBusiness, async (req, res) => {
   try {
-    const card = await createCard(req.body);
+    const card = await createCard({ ...req.body, user_id: req.body.user_id || req.user._id });
     return res.status(201).send(card);
   } catch (error) {
     return handleError(res, error.status || 500, error.message, req);

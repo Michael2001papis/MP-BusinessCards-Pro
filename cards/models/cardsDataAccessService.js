@@ -3,6 +3,7 @@ const Card = require("./mongodb/Card");
 const { handleBadRequest } = require("../../utils/errorHandler");
 const config = require("config");
 const { isDatabaseConnected } = require("../../DB/dbService");
+const localDemoStore = require("../../utils/localDemoStore");
 
 const DB = config.get("DB");
 
@@ -14,7 +15,7 @@ const dbUnavailable = () => {
 
 const find = async () => {
   if (DB === "MONGODB") {
-    if (!isDatabaseConnected()) return Promise.resolve([]);
+    if (!isDatabaseConnected()) return localDemoStore.findCards();
     try {
       const cards = await Card.find();
       return Promise.resolve(cards);
@@ -28,7 +29,7 @@ const find = async () => {
 
 const findMyCards = async (userId) => {
   if (DB === "MONGODB") {
-    if (!isDatabaseConnected()) return Promise.resolve([]);
+    if (!isDatabaseConnected()) return localDemoStore.findMyCards(userId);
     try {
       const cards = await Card.find({ user_id: userId });
       return Promise.resolve(cards);
@@ -42,7 +43,7 @@ const findMyCards = async (userId) => {
 
 const findOne = async (cardId) => {
   if (DB === "MONGODB") {
-    if (!isDatabaseConnected()) return Promise.resolve(null);
+    if (!isDatabaseConnected()) return localDemoStore.findCard(cardId);
     try {
       let card = await Card.findById(cardId);
       if (!card) throw new Error("Could not find this card in the database");
@@ -57,7 +58,7 @@ const findOne = async (cardId) => {
 
 const create = async (normalizedCard) => {
   if (DB === "MONGODB") {
-    if (!isDatabaseConnected()) return Promise.reject(dbUnavailable());
+    if (!isDatabaseConnected()) return localDemoStore.createCard(normalizedCard);
     try {
       let card = new Card(normalizedCard);
       card = await card.save();
@@ -72,7 +73,7 @@ const create = async (normalizedCard) => {
 
 const update = async (cardId, normalizedCard) => {
   if (DB === "MONGODB") {
-    if (!isDatabaseConnected()) return Promise.reject(dbUnavailable());
+    if (!isDatabaseConnected()) return localDemoStore.updateCard(cardId, normalizedCard);
     try {
       let card = await Card.findByIdAndUpdate(cardId, normalizedCard, {
         new: true,
@@ -92,7 +93,7 @@ const update = async (cardId, normalizedCard) => {
 
 const like = async (cardId, userId) => {
   if (DB === "MONGODB") {
-    if (!isDatabaseConnected()) return Promise.reject(dbUnavailable());
+    if (!isDatabaseConnected()) return localDemoStore.likeCard(cardId, userId);
     try {
       let card = await Card.findById(cardId);
       if (!card)
@@ -120,7 +121,7 @@ const like = async (cardId, userId) => {
 
 const remove = async (cardId) => {
   if (DB === "MONGODB") {
-    if (!isDatabaseConnected()) return Promise.reject(dbUnavailable());
+    if (!isDatabaseConnected()) return localDemoStore.removeCard(cardId);
     try {
       let card = await Card.findById(cardId);
 

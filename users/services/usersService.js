@@ -14,6 +14,7 @@ const {
 } = require("../validations/userValidationService");
 const normalizeUser = require("../helpers/normalizeUser");
 const { generateUserPassword } = require("../helpers/bcrypt");
+const { generateAuthToken } = require("../../auth/Providers/jwt");
 
 const getUsers = async () => {
   try {
@@ -58,6 +59,7 @@ const loginUser = async (rawUser) => {
     }
     let user = { ...rawUser };
     user = await login(user);
+    user.token = generateAuthToken(user);
 
     return Promise.resolve(user);
   } catch (error) {

@@ -1,4 +1,5 @@
 {
   "_copyright": "מיכאל פפיסמדוב MP זכויות יוצרים 15:45",
-  "JWT_KEY": ""
+  "JWT_KEY": "",
+  "DATA_MODE": "LOCAL_DEMO"
 }

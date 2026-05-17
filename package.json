@@ -6,17 +6,17 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "node scripts/check-project.js",
-    "preview": "echo [MP-BusinessCards-Pro] dev: npm run dev - production: npm start",
-    "start": "set NODE_ENV=production&& node .",
-    "dev": "set NODE_ENV=development&& nodemon .",
-    "start:unix": "NODE_ENV=production node .",
-    "dev:unix": "NODE_ENV=development nodemon ."
+    "preview": "echo [MP-BusinessCards-Pro] local demo: npm start",
+    "start": "node .",
+    "dev": "nodemon .",
+    "start:unix": "node .",
+    "dev:unix": "nodemon ."
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "engines": {
-    "node": "24.x"
+    "node": "22.x"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",

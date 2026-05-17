@@ -1,7 +1,5 @@
 // Copyright (c) 2026 מיכאל פפיסמדוב MP זכויות יוצרים 15:45
 const config = require("config");
-const { getAtlasConnectionUri } = require("./mongoConnectionStrings");
-const { getJwtKey } = require("./jwtKey");
 
 function readConfigValue(key) {
   try {
@@ -16,19 +14,12 @@ function hasValue(value) {
 }
 
 function validateRuntimeEnv() {
-  const env = process.env.NODE_ENV || readConfigValue("NODE_ENV") || "development";
-  const dbMode = readConfigValue("DB");
+  const dataMode = readConfigValue("DATA_MODE") || "LOCAL_DEMO";
   const port = readConfigValue("PORT");
   const missing = [];
 
-  if (!hasValue(env)) missing.push("NODE_ENV");
   if (!hasValue(port)) missing.push("PORT");
-  if (!hasValue(dbMode)) missing.push("DB");
-  if (!hasValue(getJwtKey())) missing.push("JWT_KEY or JWT_SECRET");
-
-  if (env === "production" && !getAtlasConnectionUri()) {
-    missing.push("MONGODB_URI or DB_NAME + DB_PASSWORD + MONGODB_CLUSTER_HOST");
-  }
+  if (!hasValue(dataMode)) missing.push("DATA_MODE");
 
   if (missing.length) {
     const message = `Missing required environment/config values: ${missing.join(", ")}`;

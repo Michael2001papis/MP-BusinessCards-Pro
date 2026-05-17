@@ -7,5 +7,9 @@ mongoose
   .connect("mongodb://localhost:27017/business_card_app")
   .then(() => console.log(chalk.magentaBright("Connect Locally To MongoDB!")))
   .catch((error) => {
-    console.log(chalk.redBright(error));
+    console.log(
+      chalk.yellowBright(
+        "Local Demo Mode: MongoDB מקומי לא זמין, לכן המערכת עובדת עם נתוני דמו מקומיים."
+      )
+    );
   });

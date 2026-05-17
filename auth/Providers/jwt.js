@@ -6,7 +6,7 @@ const generateAuthToken = (user) => {
   const key = getJwtKey();
   if (!key) {
     const err = new Error(
-      "JWT_KEY is not set. Vercel → Environment Variables → add JWT_KEY (or JWT_SECRET), then Redeploy."
+      "JWT key is not available. Local Demo Mode should provide an internal fallback key."
     );
     err.status = 500;
     throw err;

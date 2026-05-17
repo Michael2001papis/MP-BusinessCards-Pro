@@ -1,8 +1,9 @@
 {
   "_copyright": "מיכאל פפיסמדוב MP זכויות יוצרים 15:45",
   "NODE_ENV": "production",
-  "PORT": 9191,
+  "PORT": 8181,
   "TOKEN_GENERATOR": "jwt",
+  "DATA_MODE": "LOCAL_DEMO",
   "DB_NAME": "",
   "DB_PASSWORD": "",
   "MONGODB_CLUSTER_HOST": "",

@@ -47,6 +47,7 @@ const { handleError } = require("./utils/errorHandler");
 const connectToDb = require("./DB/dbService");
 const { getDatabaseHealth } = require("./DB/dbService");
 const config = require("config");
+const { getDemoStatus } = require("./utils/localDemoStore");
 
 const {
   generateInitialCards,
@@ -61,12 +62,17 @@ app.get("/favicon.ico", (req, res) => {
 });
 function sendHealth(req, res) {
   const database = getDatabaseHealth();
+  const demoStatus = database.status === "connected" ? null : getDemoStatus();
   res.status(200).json({
     ok: true,
     server: "running",
     service: "MP-BusinessCards-Pro",
     env: process.env.NODE_ENV || "development",
     checkedAt: new Date().toISOString(),
+    dataMode: demoStatus ? demoStatus.dataMode : "Database Mode",
+    message: demoStatus ? demoStatus.message : "המערכת מחוברת למסד הנתונים.",
+    usersCount: demoStatus ? demoStatus.usersCount : null,
+    cardsCount: demoStatus ? demoStatus.cardsCount : null,
     database,
   });
 }

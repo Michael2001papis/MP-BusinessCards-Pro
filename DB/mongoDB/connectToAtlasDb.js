@@ -11,8 +11,8 @@ if ([1, 2].includes(mongoose.connection.readyState)) {
   // כבר מחובר או בתהליך חיבור
 } else if (!uri) {
   console.log(
-    chalk.redBright(
-      "Atlas: הגדר MONGODB_URI (מחרוזת מלאה) או DB_NAME + DB_PASSWORD + MONGODB_CLUSTER_HOST במשתני סביבה."
+    chalk.yellowBright(
+      "Local Demo Mode: לא הוגדר חיבור MongoDB Atlas, לכן המערכת עובדת עם נתוני דמו מקומיים."
     )
   );
 } else {
